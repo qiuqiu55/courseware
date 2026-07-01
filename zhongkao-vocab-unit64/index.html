@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 - Unit 2</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:#f5f7fa; }
+        .container { max-width:800px; margin:0 auto; padding:20px; }
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); color:white; padding:20px; border-radius:15px; margin-bottom:15px; }
+        .header h1 { font-size:1.8em; margin-bottom:5px; }
+        .header p { font-size:1em; opacity:0.9; }
+        .minimal-progress { background:white; padding:12px 20px; border-radius:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+        .progress-text { font-size:1em; color:#333; }
+        .word-card { background:white; padding:30px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+        .word-source { font-size:0.85em; color:#999; margin-bottom:12px; padding:4px 10px; background:#f5f5f5; border-radius:5px; display:inline-block; }
+        .word-title { font-size:2.5em; color:#333; margin-bottom:12px; border-bottom:2px solid #667eea; padding-bottom:10px; }
+        .word-phonetic { font-size:1.3em; color:#666; margin-bottom:18px; font-style:italic; }
+        .word-phonetic .play-button { cursor:pointer; color:#2196f3; font-size:1.2em; }
+        .pos-tag { display:inline-block; padding:4px 12px; border-radius:20px; font-size:0.85em; font-weight:bold; margin-right:8px; color:white; }
+        .pos-noun { background:#2196f3; }
+        .pos-verb { background:#f44336; }
+        .pos-adj { background:#4caf50; }
+        .pos-adv { background:#ff9800; }
+        .pos-prep { background:#9c27b0; }
+        .pos-default { background:#607d8b; }
+        .word-meaning { font-size:1.2em; color:#444; margin-bottom:15px; line-height:1.8; }
+        .word-collocation { background:#f5f5f5; padding:12px; border-radius:8px; margin-bottom:18px; font-size:1em; }
+        .word-example { background:#e3f2fd; padding:18px; border-radius:10px; margin-top:18px; border-left:4px solid #2196f3; }
+        .example-title { font-weight:bold; color:#1976d2; margin-bottom:8px; font-size:1em; }
+        .example-sentence { font-size:1.15em; line-height:1.6; margin-bottom:8px; }
+        .example-translation { color:#666; font-size:0.95em; }
+        .interaction-area { background:#fff3e0; padding:20px; border-radius:10px; margin-top:20px; }
+        .interaction-title { font-size:1.2em; font-weight:bold; margin-bottom:15px; color:#e65100; }
+        .option-button { display:block; width:100%; text-align:left; background:white; color:#333; border:2px solid #ddd; padding:12px 18px; border-radius:10px; cursor:pointer; font-size:1.05em; transition:all 0.3s; margin-bottom:10px; }
+        .option-button:hover { background:#f5f5f5; border-color:#667eea; transform:translateX(5px); }
+        .option-button:disabled { cursor:not-allowed; opacity:0.6; transform:none; }
+        .option-button.correct { background:#c8e6c9 !important; border-color:#4caf50 !important; color:#2e7d32 !important; font-weight:bold; }
+        .option-button.incorrect { background:#ffcdd2 !important; border-color:#f44336 !important; color:#c62828 !important; }
+        .feedback { padding:12px; border-radius:8px; margin-top:15px; font-weight:bold; display:none; font-size:1em; }
+        .feedback.correct { background:#c8e6c9; color:#2e7d32; border:2px solid #4caf50; }
+        .feedback.incorrect { background:#ffcdd2; color:#c62828; border:2px solid #f44336; }
+        .action-buttons { margin-top:20px; display:flex; gap:12px; }
+        .btn { background:#667eea; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:1.05em; transition:all 0.3s; flex:1; }
+        .btn:hover { background:#764ba2; transform:translateY(-2px); }
+        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; }
+    </style>
+</head>
+<body>
+    <!-- 返回主页按钮 -->
+    <a href="../zhongkao-vocab-index.html" style="
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        transition: all 0.3s;
+    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 中考词汇精讲</h1>
+            <p>Unit 64 · 智能复习系统</p>
+        </div>
+        
+        <div class="minimal-progress">
+            <div class="progress-text" id="progressText">已掌握：0 | 待学：30</div>
+        </div>
+        
+        <div class="word-card" id="wordCard">
+            <div class="word-source" id="wordSource">🆕 新词</div>
+            <div class="word-title" id="wordText">加载中...</div>
+            <div class="word-phonetic" id="phoneticText">
+                <span class="phonetic-text">[音标加载中...]</span>
+                <span class="play-button" onclick="playTTS()">🔊</span>
+            </div>
+            
+            <div class="word-meaning" id="meaningText">
+                <span class="pos-tag pos-default">词性</span>词义加载中...
+            </div>
+            <div class="word-collocation" id="collocationText">
+                <strong>常用搭配：</strong>加载中...
+            </div>
+            
+            <div class="word-example">
+                <div class="example-title">📗 中考真题例句</div>
+                <div class="example-sentence" id="exampleSentence">[真实例句加载中...]</div>
+                <div class="example-translation" id="exampleTranslation"></div>
+            </div>
+            
+            <div class="interaction-area">
+                <div class="interaction-title">💡 互动练习：选择正确的词义</div>
+                <div id="optionsContainer">
+                    <button class="option-button" disabled>A. 加载中...</button>
+                    <button class="option-button" disabled>B. 加载中...</button>
+                    <button class="option-button" disabled>C. 加载中...</button>
+                    <button class="option-button" disabled>D. 加载中...</button>
+                </div>
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="nextBtn" style="display:none;" onclick="nextWord()">下一个词 →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ========== 词汇数据（完全内嵌，无外部依赖） ==========
+        var vocabularyList = [
+    {
+        "word": "come to an end",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 完结  结束；终止；告终，结束",
+        "collocation": "",
+        "example": "This is about come to an end.",
+        "example_cn": "这是关于na. 完结  结束；终止；告终，结束的。"
+    },
+    {
+        "word": "come true",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. (预言等)成事实；实现；(作物)不变种地发芽生长  成为现实；成为事实；变成现实",
+        "collocation": "",
+        "example": "If you wish really hard, it just might come true.",
+        "example_cn": "【come true的例句】"
+    },
+    {
+        "word": "come up with",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 想出(一个主意或计划)；提出；提供；筹措  赶上；找到；想出某事",
+        "collocation": "",
+        "example": "How can you come up with such brilliant ideas?",
+        "example_cn": "【come up with的例句】"
+    },
+    {
+        "word": "communicate with",
+        "pos": "v.",
+        "phonetic": "/communicate with/",
+        "meaning": "联络",
+        "collocation": "communicate with up",
+        "example": "This is a communicate with.",
+        "example_cn": "这是一个联络。"
+    },
+    {
+        "word": "compete with",
+        "pos": "v.",
+        "phonetic": "/compete with/",
+        "meaning": "竞争",
+        "collocation": "compete with up",
+        "example": "This is a compete with.",
+        "example_cn": "这是一个竞争。"
+    },
+    {
+        "word": "complain about",
+        "pos": "v.",
+        "phonetic": "/complain about/",
+        "meaning": "埋怨",
+        "collocation": "complain about up",
+        "example": "This is a complain about.",
+        "example_cn": "这是一个埋怨。"
+    },
+    {
+        "word": "consist of",
+        "pos": "v.",
+        "phonetic": "/consist of/",
+        "meaning": "由…合成",
+        "collocation": "consist of up",
+        "example": "This is a consist of.",
+        "example_cn": "这是一个由…合成。"
+    },
+    {
+        "word": "cut down",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 砍倒；削减；减价；夺去…活动力  减少；缩短；降低",
+        "collocation": "",
+        "example": "They want to cut down several trees to make room for the parking lot.",
+        "example_cn": "【cut down的例句】"
+    },
+    {
+        "word": "deal with",
+        "pos": "",
+        "phonetic": "/deal with/",
+        "meaning": "na. 办理；对待；与…交涉；与…交易  处理；对付；应付",
+        "collocation": "",
+        "example": "This is a deal with.",
+        "example_cn": "这是一个na. 办理；对待；与…交涉；与…交易  处理；对付；应付。"
+    },
+    {
+        "word": "depend on",
+        "pos": "v.",
+        "phonetic": "/depend on/",
+        "meaning": "依靠",
+        "collocation": "depend on up",
+        "example": "This is a depend on.",
+        "example_cn": "这是一个依靠。"
+    },
+    {
+        "word": "die of",
+        "pos": "",
+        "phonetic": "/die of/",
+        "meaning": "na. 因…而死  死于；因……而死；因……病而死",
+        "collocation": "",
+        "example": "This is a die of.",
+        "example_cn": "这是一个na. 因…而死  死于；因……而死；因……病而死。"
+    },
+    {
+        "word": "do harm to",
+        "pos": "v.",
+        "phonetic": "/do harm to/",
+        "meaning": "损害",
+        "collocation": "do harm to up",
+        "example": "This is a do harm to.",
+        "example_cn": "这是一个损害。"
+    },
+    {
+        "word": "do one's best",
+        "pos": "",
+        "phonetic": "/do one's best/",
+        "meaning": "na. 竭尽所能；尽力  尽最大努力；不遗余力；尽最大的努力",
+        "collocation": "",
+        "example": "This is a do one's best.",
+        "example_cn": "这是一个na. 竭尽所能；尽力  尽最大努力；不遗余力；尽最大的努力。"
+    },
+    {
+        "word": "do sb. a favour",
+        "pos": "",
+        "phonetic": "/do sb. a favour/",
+        "meaning": "帮忙；帮个忙；帮助某人",
+        "collocation": "",
+        "example": "This is a do sb. a favour.",
+        "example_cn": "这是一个帮忙；帮个忙；帮助某人。"
+    },
+    {
+        "word": "do some shopping",
+        "pos": "",
+        "phonetic": "/do some shopping/",
+        "meaning": "购物；买东西；买些东西",
+        "collocation": "",
+        "example": "This is a do some shopping.",
+        "example_cn": "这是一个购物；买东西；买些东西。"
+    },
+    {
+        "word": "dream of",
+        "pos": "v.",
+        "phonetic": "/dream of/",
+        "meaning": "梦想",
+        "collocation": "dream of up",
+        "example": "This is a dream of.",
+        "example_cn": "这是一个梦想。"
+    },
+    {
+        "word": "dress up",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 乔装；装扮；为…打扮；盛装打扮  穿上盛装；装饰；精心打扮",
+        "collocation": "",
+        "example": "Everyone dressed up for the graduation ball.",
+        "example_cn": "【dress up的例句】"
+    },
+    {
+        "word": "each other",
+        "pos": "pron.",
+        "phonetic": "/iːˈtʃʌðə/",
+        "meaning": "彼此",
+        "collocation": "",
+        "example": "Jack and Robert loved each other.",
+        "example_cn": "【each other的例句】"
+    },
+    {
+        "word": "enjoy oneself",
+        "pos": "",
+        "phonetic": "/enjoy oneself/",
+        "meaning": "na. 过得快乐  玩得愉快；玩得开心；过得愉快",
+        "collocation": "",
+        "example": "This is a enjoy oneself.",
+        "example_cn": "这是一个na. 过得快乐  玩得愉快；玩得开心；过得愉快。"
+    },
+    {
+        "word": "fall asleep",
+        "pos": "",
+        "phonetic": "/fall asleep/",
+        "meaning": "na. 入睡  睡着；睡着了；睡觉",
+        "collocation": "",
+        "example": "This is a fall asleep.",
+        "example_cn": "这是一个na. 入睡  睡着；睡着了；睡觉。"
+    },
+    {
+        "word": "far away",
+        "pos": "adj.",
+        "phonetic": "/far away/",
+        "meaning": "远方的；老早老早以前的；(眼色,神情等)走神的",
+        "collocation": "very far away",
+        "example": "This is a far away.",
+        "example_cn": "这是一个远方的；老早老早以前的；(眼色,神情等)走神的。"
+    },
+    {
+        "word": "far away from",
+        "pos": "",
+        "phonetic": "/far away from/",
+        "meaning": "远离；离…很远；远离，隐居",
+        "collocation": "",
+        "example": "This is a far away from.",
+        "example_cn": "这是一个远离；离…很远；远离，隐居。"
+    },
+    {
+        "word": "fill in",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 填充；填写；同“fill”  填满；填入；过门",
+        "collocation": "",
+        "example": "After you're done laying the pipe, fill in the trench.",
+        "example_cn": "【fill in的例句】"
+    },
+    {
+        "word": "find out",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 查出；发现；看清…的面目；识破  查明；找出；了解",
+        "collocation": "",
+        "example": "I don't know who the twenty-first president of the United States was, but it should be very easy to find out.",
+        "example_cn": "【find out的例句】"
+    },
+    {
+        "word": "focus on",
+        "pos": "",
+        "phonetic": "/focus on/",
+        "meaning": "致力于; 使聚焦于; 对（某事或做某事）予以注意; 把…作为兴趣中心",
+        "collocation": "",
+        "example": "This is a focus on.",
+        "example_cn": "这是一个致力于; 使聚焦于; 对（某事或做某事）予以注意; 把…作为兴趣中心。"
+    },
+    {
+        "word": "for example",
+        "pos": "",
+        "phonetic": "/for example/",
+        "meaning": "na. 例如  举例；比如；比如说",
+        "collocation": "",
+        "example": "This is a for example.",
+        "example_cn": "这是一个na. 例如  举例；比如；比如说。"
+    },
+    {
+        "word": "for free",
+        "pos": "",
+        "phonetic": "/for free/",
+        "meaning": "免费地；免费的；为了免费",
+        "collocation": "",
+        "example": "This is a for free.",
+        "example_cn": "这是一个免费地；免费的；为了免费。"
+    },
+    {
+        "word": "for the first time",
+        "pos": "",
+        "phonetic": "/for the first time/",
+        "meaning": "na. 第一次  首次；初次；从第一次开始",
+        "collocation": "",
+        "example": "This is a for the first time.",
+        "example_cn": "这是一个na. 第一次  首次；初次；从第一次开始。"
+    },
+    {
+        "word": "for the time being",
+        "pos": "",
+        "phonetic": "",
+        "meaning": "na. 暂时；一时；临时；在目前  暂且；眼下；now暂且，就现在来说",
+        "collocation": "",
+        "example": "I think I will ignore the problem for the time being.",
+        "example_cn": "【for the time being的例句】"
+    },
+    {
+        "word": "from time to time",
+        "pos": "",
+        "phonetic": "/from time to time/",
+        "meaning": "na. 时时  有时；不时；不时地",
+        "collocation": "",
+        "example": "This is a from time to time.",
+        "example_cn": "这是一个na. 时时  有时；不时；不时地。"
+    }
+];;;
+        
+        // ========== 主程序 ==========
+        var currentIndex = 0;
+        var currentWord = null;
+        var isAnswered = false;
+        var stats = { mastered: 0, learning: vocabularyList.length };
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ 页面加载完成');
+            console.log('   词汇数量：', vocabularyList.length);
+            loadWord();
+        });
+        
+        // 加载单词
+        function loadWord() {
+            if (currentIndex >= vocabularyList.length) {
+                document.getElementById('wordCard').innerHTML = '<h2 style="text-align:center; color:#667eea;">🎉 本单元学习完毕！</h2>';
+                return;
+            }
+            
+            currentWord = vocabularyList[currentIndex];
+            console.log('📖 当前词：', currentWord.word);
+            
+            // 更新界面
+            document.getElementById('wordText').textContent = currentWord.word;
+            document.querySelector('.phonetic-text').textContent = currentWord.phonetic || '[音标待补充]';
+            
+            // 词性标签
+            var posClass = 'pos-default';
+            if (currentWord.pos === 'n.') posClass = 'pos-noun';
+            else if (currentWord.pos === 'v.') posClass = 'pos-verb';
+            else if (currentWord.pos === 'adj.') posClass = 'pos-adj';
+            else if (currentWord.pos === 'adv.') posClass = 'pos-adv';
+            else if (currentWord.pos === 'prep.') posClass = 'pos-prep';
+            
+            document.getElementById('meaningText').innerHTML = 
+                '<span class="pos-tag ' + posClass + '">' + currentWord.pos + '</span>' + currentWord.meaning;
+            
+            document.getElementById('collocationText').innerHTML = 
+                '<strong>常用搭配：</strong>' + (currentWord.collocation || '待补充');
+            
+            // 例句
+            if (currentWord.example && currentWord.example !== '') {
+                document.getElementById('exampleSentence').textContent = currentWord.example;
+                document.getElementById('exampleTranslation').textContent = currentWord.example_cn || '';
+            } else {
+                document.getElementById('exampleSentence').textContent = '[暂无例句]';
+                document.getElementById('exampleTranslation').textContent = '';
+            }
+            
+            // 生成选项
+            generateOptions();
+            
+            // 重置状态
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // 更新进度
+            updateProgress();
+        }
+        
+        // 生成选项
+        function generateOptions() {
+            var container = document.getElementById('optionsContainer');
+            
+            // 随机选3个错误答案
+            var wrongWords = vocabularyList
+                .filter(function(w) { return w.word !== currentWord.word; })
+                .sort(function() { return Math.random() - 0.5; })
+                .slice(0, 3);
+            
+            var allOptions = [currentWord].concat(wrongWords);
+            var shuffled = allOptions.sort(function() { return Math.random() - 0.5; });
+            
+            container.innerHTML = '';
+            for (var i = 0; i < shuffled.length; i++) {
+                var btn = document.createElement('button');
+                btn.className = 'option-button';
+                btn.innerHTML = '<strong>' + String.fromCharCode(65+i) + '.</strong> ' + shuffled[i].meaning;
+                btn.onclick = (function(correct, btnEl) {
+                    return function() {
+                        checkAnswer(correct, btnEl);
+                    };
+                })(shuffled[i].word === currentWord.word, btn);
+                container.appendChild(btn);
+            }
+        }
+        
+        // 检查答案
+        function checkAnswer(isCorrect, buttonElement) {
+            if (isAnswered) return;
+            
+            var feedback = document.getElementById('feedback');
+            isAnswered = true;
+            
+            // 禁用所有选项
+            var buttons = document.querySelectorAll('.option-button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+            }
+            
+            if (isCorrect) {
+                feedback.textContent = '✅ 正确！太棒了！';
+                feedback.className = 'feedback correct';
+                buttonElement.classList.add('correct');
+                stats.mastered++;
+                stats.learning--;
+            } else {
+                feedback.textContent = '❌ 不对，正确答案是"' + currentWord.meaning + '"';
+                feedback.className = 'feedback incorrect';
+                buttonElement.classList.add('incorrect');
+                
+                // 高亮正确答案
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].textContent.indexOf(currentWord.meaning) !== -1) {
+                        buttons[i].classList.add('correct');
+                    }
+                }
+            }
+            
+            feedback.style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            updateProgress();
+        }
+        
+        // 下一个词
+        function nextWord() {
+            currentIndex++;
+            loadWord();
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            document.getElementById('progressText').textContent = 
+                '已掌握：' + stats.mastered + ' | 待学：' + stats.learning;
+        }
+        
+        // TTS发音
+        function playTTS() {
+            if ('speechSynthesis' in window) {
+                var utterance = new SpeechSynthesisUtterance(currentWord.word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 - Unit 1（修复版）</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:#f5f7fa; }
+        
+        .container { max-width:800px; margin:0 auto; padding:20px; }
+        
+        /* Header */
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); 
+                   color:white; padding:20px; border-radius:15px; margin-bottom:15px; }
+        .header h1 { font-size:1.8em; margin-bottom:5px; }
+        .header p { font-size:1em; opacity:0.9; }
+        
+        /* Minimal Progress */
+        .minimal-progress { background:white; padding:12px 20px; border-radius:10px; 
+                            margin-bottom:15px; display:flex; 
+                            justify-content:space-between; align-items:center;
+                            box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+        .progress-text { font-size:1em; color:#333; }
+        .streak-badge { background:#ff9800; color:white; padding:5px 12px; 
+                          border-radius:20px; font-size:0.9em; font-weight:bold; }
+        
+        /* Word Card */
+        .word-card { background:white; padding:30px; border-radius:15px; 
+                     box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+        
+        /* Word Source Tag */
+        .word-source { font-size:0.85em; color:#999; margin-bottom:12px; 
+                        padding:4px 10px; background:#f5f5f5; border-radius:5px; 
+                        display:inline-block; }
+        .word-source.review { background:#fff3e0; color:#f57c00; }
+        .word-source.new { background:#e3f2fd; color:#1976d2; }
+        
+        .word-title { font-size:2.5em; color:#333; margin-bottom:12px; 
+                        border-bottom:2px solid #667eea; padding-bottom:10px; }
+        .word-phonetic { font-size:1.3em; color:#666; margin-bottom:18px; 
+                          font-style:italic; }
+        .word-phonetic .phonetic-text { margin-right:10px; }
+        .word-phonetic .play-button { cursor:pointer; color:#2196f3; 
+                                       font-size:1.2em; }
+        .word-phonetic .play-button:hover { color:#1976d2; }
+        
+        /* Word Forms */
+        .word-forms { background:#f3e5f5; padding:15px; border-radius:8px; 
+                      margin-bottom:18px; border-left:4px solid #9c27b0; }
+        .forms-title { font-weight:bold; color:#7b1fa2; margin-bottom:8px; 
+                        font-size:1em; }
+        .forms-content { font-size:1em; line-height:1.6; }
+        .form-item { margin:5px 0; }
+        .form-label { color:#666; font-size:0.9em; }
+        .form-value { color:#333; font-weight:500; }
+        
+        /* POS Tag */
+        .pos-tag { display:inline-block; padding:4px 12px; border-radius:20px; 
+                    font-size:0.85em; font-weight:bold; margin-right:8px; 
+                    color:white; }
+        .pos-noun { background:#2196f3; }
+        .pos-verb { background:#f44336; }
+        .pos-adj { background:#4caf50; }
+        .pos-adv { background:#ff9800; }
+        .pos-prep { background:#9c27b0; }
+        .pos-default { background:#607d8b; }
+        
+        .word-meaning { font-size:1.2em; color:#444; margin-bottom:15px; 
+                         line-height:1.8; }
+        .word-collocation { background:#f5f5f5; padding:12px; border-radius:8px; 
+                            margin-bottom:18px; font-size:1em; }
+        
+        /* Example */
+        .word-example { background:#e3f2fd; padding:18px; border-radius:10px; 
+                         margin-top:18px; border-left:4px solid #2196f3; }
+        .example-title { font-weight:bold; color:#1976d2; margin-bottom:8px; 
+                         font-size:1em; }
+        .example-sentence { font-size:1.15em; line-height:1.6; margin-bottom:8px; }
+        .example-translation { color:#666; font-size:0.95em; }
+        
+        /* Interaction */
+        .interaction-area { background:#fff3e0; padding:20px; border-radius:10px; 
+                            margin-top:20px; }
+        .interaction-title { font-size:1.2em; font-weight:bold; margin-bottom:15px; 
+                            color:#e65100; }
+        
+        /* Options */
+        .option-button { display:block; width:100%; text-align:left; 
+                         background:white; color:#333; border:2px solid #ddd; 
+                         padding:12px 18px; border-radius:10px; cursor:pointer; 
+                         font-size:1.05em; transition:all 0.3s; margin-bottom:10px; }
+        .option-button:hover { background:#f5f5f5; border-color:#667eea; 
+                              transform:translateX(5px); }
+        .option-button:disabled { cursor:not-allowed; opacity:0.6; 
+                                  transform:none; }
+        .option-button.correct { background:#c8e6c9 !important; 
+                                border-color:#4caf50 !important; 
+                                color:#2e7d32 !important;
+                                font-weight:bold; }
+        .option-button.incorrect { background:#ffcdd2 !important; 
+                                  border-color:#f44336 !important; 
+                                  color:#c62828 !important; }
+        
+        /* Feedback */
+        .feedback { padding:12px; border-radius:8px; margin-top:15px; 
+                    font-weight:bold; display:none; font-size:1em; }
+        .feedback.correct { background:#c8e6c9; color:#2e7d32; 
+                            border:2px solid #4caf50; }
+        .feedback.incorrect { background:#ffcdd2; color:#c62828; 
+                            border:2px solid #f44336; }
+        
+        /* Buttons */
+        .action-buttons { margin-top:20px; display:flex; gap:12px; }
+        .btn { background:#667eea; color:white; border:none; padding:10px 20px; 
+               border-radius:8px; cursor:pointer; font-size:1.05em; 
+               transition:all 0.3s; flex:1; }
+        .btn:hover { background:#764ba2; transform:translateY(-2px); }
+        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; }
+        .btn-success { background:#4caf50; }
+        .btn-success:hover { background:#388e3c; }
+        
+        /* Completion */
+        .completion-card { background:white; padding:40px; border-radius:15px; 
+                           box-shadow:0 2px 10px rgba(0,0,0,0.1); text-align:center; }
+        .completion-title { color:#667eea; font-size:2.2em; margin-bottom:15px; }
+        .completion-text { font-size:1.2em; margin:20px 0; line-height:1.8; }
+        .achievement-showcase { background:#f5f5f5; padding:20px; 
+                                border-radius:10px; margin:20px 0; }
+        .achievement-item { margin:10px 0; font-size:1.1em; }
+        
+        /* AI Tutor */
+        .ai-tutor { position:fixed; bottom:30px; right:30px; 
+                     background:#667eea; color:white; width:60px; height:60px; 
+                     border-radius:50%; display:flex; align-items:center; 
+                     justify-content:center; cursor:pointer; font-size:1.5em;
+                     box-shadow:0 4px 15px rgba(0,0,0,0.2); z-index:1000; }
+        .ai-tutor:hover { transform:scale(1.1); }
+        
+        @media (max-width:768px) {
+            .header h1 { font-size:1.5em; }
+            .word-title { font-size:2em; }
+            .minimal-progress { flex-direction:column; gap:10px; }
+            .option-button { font-size:1em; padding:10px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 中考词汇精讲</h1>
+            <p>Unit 1 · 修复版 · 互动正常</p>
+        </div>
+        
+        <!-- Minimal Progress -->
+        <div class="minimal-progress">
+            <div class="progress-text" id="progressText">已掌握：0 | 待学：30</div>
+            <div class="streak-badge" id="streakBadge" style="display:none;">🔥 连续0天</div>
+        </div>
+        
+        <!-- Word Card -->
+        <div class="word-card" id="wordCard">
+            <div class="word-source" id="wordSource">🆕 新词</div>
+            <div class="word-title" id="wordText">ability</div>
+            <div class="word-phonetic" id="phoneticText">
+                <span class="phonetic-text">/əˈbɪləti/</span>
+                <span class="play-button" onclick="playTTS()">🔊</span>
+            </div>
+            
+            <!-- 词形变化 -->
+            <div class="word-forms" id="wordForms" style="display:block;">
+                <div class="forms-title">📋 词形变化</div>
+                <div class="forms-content" id="formsContent">
+                    <div class="form-item">
+                        <span class="form-label">名词：</span>
+                        <span class="form-value">ability</span>
+                    </div>
+                    <div class="form-item">
+                        <span class="form-label">复数：</span>
+                        <span class="form-value">abilities</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="word-meaning" id="meaningText">
+                <span class="pos-tag pos-noun">n.</span>能力；才能
+            </div>
+            <div class="word-collocation" id="collocationText">
+                <strong>常用搭配：</strong>ability to do sth. 做某事的能力
+            </div>
+            
+            <div class="word-example">
+                <div class="example-title">📗 中考真题例句</div>
+                <div class="example-sentence" id="exampleSentence">She has the ability to solve complex problems.</div>
+                <div class="example-translation" id="exampleTranslation">她有解决复杂问题的能力。</div>
+            </div>
+            
+            <div class="interaction-area">
+                <div class="interaction-title">💡 互动练习：选择正确的词义</div>
+                <div id="optionsContainer">
+                    <button class="option-button" onclick="checkAnswer('ability', this)">
+                        <strong>A.</strong> 能力；才能
+                    </button>
+                    <button class="option-button" onclick="checkAnswer('able', this)">
+                        <strong>B.</strong> 能够的；有能力的
+                    </button>
+                    <button class="option-button" onclick="checkAnswer('about', this)">
+                        <strong>C.</strong> 关于；大约
+                    </button>
+                    <button class="option-button" onclick="checkAnswer('above', this)">
+                        <strong>D.</strong> 在……上面；超过
+                    </button>
+                </div>
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="nextBtn" style="display:none;" onclick="loadNextWord()">下一个词 →</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion -->
+        <div class="completion-card" id="completionCard" style="display:none;">
+            <div class="completion-title">🎉 太棒了！</div>
+            <div class="completion-text" id="completionText"></div>
+            
+            <div class="achievement-showcase" id="achievementShowcase">
+                <div class="achievement-item" id="achievementToday">📊 今日掌握：0 词</div>
+                <div class="achievement-item" id="achievementTotal">📚 总掌握：0 词</div>
+                <div class="achievement-item" id="achievementStreak">🔥 连续学习：0 天</div>
+            </div>
+            
+            <button class="btn btn-success" style="font-size:1.2em; padding:12px 30px;"
+                    onclick="location.reload()">继续学习</button>
+        </div>
+    </div>
+    
+    <!-- AI Tutor Button -->
+    <div class="ai-tutor" title="AI学伴">🤖</div>
+    
+    <script>
+        // ========== 词汇数据（内嵌，确保加载） ==========
+        const vocabularyList = [
+            {"word": "ability", "pos": "n.", "phonetic": "/əˈbɪləti/", "meaning": "能力；才能", "collocation": "ability to do sth."},
+            {"word": "able", "pos": "adj.", "phonetic": "/ˈeɪbl/", "meaning": "能够的；有能力的", "collocation": "be able to"},
+            {"word": "about", "pos": "prep.", "phonetic": "/əˈbaʊt/", "meaning": "关于；大约", "collocation": "talk about"},
+            {"word": "above", "pos": "prep.", "phonetic": "/əˈbʌv/", "meaning": "在……上面；超过", "collocation": "above all"},
+            {"word": "abroad", "pos": "adv.", "phonetic": "/əˈbrɔːd/", "meaning": "在国外；到国外", "collocation": "go abroad"},
+            {"word": "accept", "pos": "v.", "phonetic": "/əkˈsept/", "meaning": "接受；同意", "collocation": "accept an invitation"},
+            {"word": "accident", "pos": "n.", "phonetic": "/ˈæksɪdənt/", "meaning": "事故；意外", "collocation": "traffic accident"},
+            {"word": "accurate", "pos": "adj.", "phonetic": "/ˈækjərət/", "meaning": "准确的；精确的", "collocation": "accurate information"},
+            {"word": "ache", "pos": "n.", "phonetic": "/eɪk/", "meaning": "疼痛", "collocation": "have a headache"},
+            {"word": "achieve", "pos": "v.", "phonetic": "/əˈtʃiːv/", "meaning": "实现；达到", "collocation": "achieve a goal"}
+        ];
+        
+        // ========== 例句数据 ==========
+        const realExamples = {
+            "ability": [
+                { en: "She has the ability to solve complex problems.", cn: "她有解决复杂问题的能力。" }
+            ],
+            "able": [
+                { en: "She is able to speak three languages fluently.", cn: "她能够流利地说三种语言。" }
+            ]
+        };
+        
+        // ========== 词形变化数据 ==========
+        const wordForms = {
+            "ability": { noun: "ability", plural: "abilities" },
+            "able": { adjective: "able", adverb: "ably", noun: "ability" }
+        };
+        
+        // ========== 智能复习系统（简化版） ==========
+        class SmartReviewSystem {
+            constructor() {
+                this.storageKey = 'zhongkao-vocab-unit73';
+                this.data = this.loadData();
+            }
+            
+            loadData() {
+                const saved = localStorage.getItem(this.storageKey);
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+                return {
+                    masteredPool: [],
+                    reviewPool: [],
+                    wordStatus: {}
+                };
+            }
+            
+            saveData() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+            }
+            
+            processAnswer(word, isCorrect) {
+                if (!this.data.wordStatus[word]) {
+                    this.data.wordStatus[word] = { correctStreak: 0, mastered: false };
+                }
+                
+                const status = this.data.wordStatus[word];
+                
+                if (isCorrect) {
+                    status.correctStreak++;
+                    if (status.correctStreak >= 2 && !status.mastered) {
+                        status.mastered = true;
+                        this.data.masteredPool.push(word);
+                    }
+                } else {
+                    status.correctStreak = 0;
+                    if (!this.data.reviewPool.includes(word)) {
+                        this.data.reviewPool.push(word);
+                    }
+                }
+                
+                this.saveData();
+            }
+            
+            getStats() {
+                return {
+                    masteredCount: this.data.masteredPool.length,
+                    reviewCount: this.data.reviewPool.length
+                };
+            }
+        }
+        
+        // ========== 主程序 ==========
+        const system = new SmartReviewSystem();
+        
+        let currentWordIndex = 0;
+        let currentWordData = null;
+        let isAnswered = false;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ 页面加载完成');
+            loadNextWord();
+        });
+        
+        // 加载下一个词
+        function loadNextWord() {
+            console.log('📖 加载下一个词...');
+            
+            if (currentWordIndex >= vocabularyList.length) {
+                showCompletion();
+                return;
+            }
+            
+            currentWordData = vocabularyList[currentWordIndex];
+            
+            // 更新单词信息
+            document.getElementById('wordText').textContent = currentWordData.word;
+            document.querySelector('.phonetic-text').textContent = currentWordData.phonetic;
+            
+            // 词形变化
+            displayWordForms(currentWordData.word);
+            
+            // 词义
+            const posTag = getPosTag(currentWordData.pos);
+            document.getElementById('meaningText').innerHTML = 
+                `<span class="pos-tag ${posTag.class}">${currentWordData.pos}</span>${currentWordData.meaning}`;
+            
+            // 搭配
+            document.getElementById('collocationText').innerHTML = 
+                `<strong>常用搭配：</strong>${currentWordData.collocation}`;
+            
+            // 例句
+            const examples = realExamples[currentWordData.word];
+            if (examples && examples.length > 0) {
+                document.getElementById('exampleSentence').textContent = examples[0].en;
+                document.getElementById('exampleTranslation').textContent = examples[0].cn;
+            }
+            
+            // 生成选项
+            generateOptions(currentWordData);
+            
+            // 重置状态
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            currentWordIndex++;
+        }
+        
+        // 显示词形变化
+        function displayWordForms(word) {
+            const forms = wordForms[word];
+            const formsDiv = document.getElementById('wordForms');
+            const contentDiv = document.getElementById('formsContent');
+            
+            if (!forms || Object.keys(forms).length === 0) {
+                formsDiv.style.display = 'none';
+                return;
+            }
+            
+            formsDiv.style.display = 'block';
+            
+            let html = '';
+            for (const [key, value] of Object.entries(forms)) {
+                const label = getFormLabel(key);
+                html += `<div class="form-item">
+                            <span class="form-label">${label}：</span>
+                            <span class="form-value">${value}</span>
+                         </div>`;
+            }
+            
+            contentDiv.innerHTML = html;
+        }
+        
+        // 获取词形变化标签
+        function getFormLabel(key) {
+            const labels = {
+                'noun': '名词',
+                'plural': '复数',
+                'verb': '动词',
+                'adjective': '形容词',
+                'adverb': '副词'
+            };
+            return labels[key] || key;
+        }
+        
+        // 获取词性标签
+        function getPosTag(pos) {
+            const posMap = {
+                'n.': 'pos-noun',
+                'v.': 'pos-verb',
+                'adj.': 'pos-adj',
+                'adv.': 'pos-adv',
+                'prep.': 'pos-prep'
+            };
+            return { class: posMap[pos] || 'pos-default' };
+        }
+        
+        // 生成选项
+        function generateOptions(correctWordData) {
+            const container = document.getElementById('optionsContainer');
+            
+            // 随机选3个错误选项
+            const wrongWords = vocabularyList
+                .filter(w => w.word !== correctWordData.word)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            // 合并选项并打乱
+            const allOptions = [correctWordData, ...wrongWords];
+            const shuffled = allOptions.sort(() => Math.random() - 0.5);
+            
+            // 生成按钮
+            container.innerHTML = shuffled.map((word, i) => 
+                `<button class="option-button" onclick="checkAnswer('${word.word}', this)">
+                    <strong>${String.fromCharCode(65+i)}.</strong> ${word.meaning}
+                </button>`
+            ).join('');
+        }
+        
+        // 检查答案（修复版）
+        function checkAnswer(selectedWord, buttonElement) {
+            if (isAnswered) return;
+            
+            console.log('🔍 检查答案：', selectedWord, '正确答案：', currentWordData.word);
+            
+            const feedback = document.getElementById('feedback');
+            isAnswered = true;
+            
+            // 禁用所有选项
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            const isCorrect = selectedWord === currentWordData.word;
+            
+            if (isCorrect) {
+                // 答对了
+                feedback.textContent = '✅ 正确！太棒了！';
+                feedback.className = 'feedback correct';
+                buttonElement.classList.add('correct');
+                console.log('✅ 答对了！');
+            } else {
+                // 答错了
+                feedback.textContent = `❌ 不对，正确答案是"${currentWordData.meaning}"`;
+                feedback.className = 'feedback incorrect';
+                buttonElement.classList.add('incorrect');
+                
+                // 高亮正确答案
+                document.querySelectorAll('.option-button').forEach(btn => {
+                    if (btn.textContent.includes(currentWordData.meaning)) {
+                        btn.classList.add('correct');
+                    }
+                });
+                
+                console.log('❌ 答错了');
+            }
+            
+            // 显示反馈
+            feedback.style.display = 'block';
+            
+            // 处理答案（更新系统）
+            system.processAnswer(currentWordData.word, isCorrect);
+            
+            // 显示下一个按钮
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            console.log('✅ 反馈已显示，下一题按钮已显示');
+        }
+        
+        // 显示完成页面
+        function showCompletion() {
+            document.getElementById('wordCard').style.display = 'none';
+            document.getElementById('completionCard').style.display = 'block';
+            
+            const stats = system.getStats();
+            document.getElementById('achievementToday').textContent = 
+                `📊 今日掌握：${stats.masteredCount} 词`;
+        }
+        
+        // TTS发音
+        function playTTS() {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(currentWordData.word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // AI学伴
+        document.querySelector('.ai-tutor').addEventListener('click', function() {
+            alert(`🤖 AI学伴演示：\n\n当前单词：${currentWordData.word}`);
+        });
+    </script>
+</body>
+</html>
