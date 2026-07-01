@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 - 智能复习系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; }
+        
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        /* Header */
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   color: white; padding: 30px; border-radius: 15px; margin-bottom: 20px; }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        
+        /* Achievement Bar */
+        .achievement-bar { background: white; padding: 20px; border-radius: 10px; 
+                            margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                            display: flex; justify-content: space-around; text-align: center; }
+        .achievement-item { flex: 1; }
+        .achievement-number { font-size: 2em; font-weight: bold; color: #667eea; }
+        .achievement-label { font-size: 0.9em; color: #666; margin-top: 5px; }
+        
+        /* Progress */
+        .progress-bar { background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .progress-track { background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #667eea, #764ba2); 
+                         height: 100%; width: 0%; transition: width 0.5s; }
+        .progress-text { margin-top: 10px; font-size: 1.1em; color: #333; }
+        
+        /* Status Indicators */
+        .status-indicators { display: flex; gap: 15px; margin-bottom: 20px; }
+        .status-item { flex: 1; background: white; padding: 15px; border-radius: 10px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
+        .status-number { font-size: 1.8em; font-weight: bold; margin-bottom: 5px; }
+        .status-new { color: #2196f3; }
+        .status-review { color: #ff9800; }
+        .status-mastered { color: #4caf50; }
+        .status-label { font-size: 0.9em; color: #666; }
+        
+        /* Word Card */
+        .word-card { background: white; padding: 30px; border-radius: 15px; 
+                     margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .word-source { font-size: 0.9em; color: #999; margin-bottom: 15px; 
+                        padding: 5px 10px; background: #f5f5f5; border-radius: 5px; 
+                        display: inline-block; }
+        .word-source.review { background: #fff3e0; color: #f57c00; }
+        .word-source.new { background: #e3f2fd; color: #1976d2; }
+        
+        .word-title { font-size: 2.5em; color: #333; margin-bottom: 15px; 
+                        border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        .word-phonetic { font-size: 1.4em; color: #666; margin-bottom: 20px; 
+                          font-style: italic; }
+        
+        /* POS Tags */
+        .pos-tag { display: inline-block; padding: 5px 15px; border-radius: 20px; 
+                    font-size: 0.9em; font-weight: bold; margin-right: 10px; color: white; }
+        .pos-noun { background: #2196f3; }
+        .pos-verb { background: #f44336; }
+        .pos-adj { background: #4caf50; }
+        .pos-adv { background: #ff9800; }
+        .pos-prep { background: #9c27b0; }
+        .pos-default { background: #607d8b; }
+        
+        .word-meaning { font-size: 1.3em; color: #444; margin-bottom: 20px; line-height: 1.8; }
+        .word-collocation { background: #f5f5f5; padding: 15px; border-radius: 8px; 
+                            margin-bottom: 20px; font-size: 1.1em; }
+        
+        /* Example */
+        .word-example { background: #e3f2fd; padding: 20px; border-radius: 10px; 
+                         margin-top: 20px; border-left: 4px solid #2196f3; }
+        .example-title { font-weight: bold; color: #1976d2; margin-bottom: 10px; }
+        .example-sentence { font-size: 1.2em; line-height: 1.6; margin-bottom: 10px; }
+        .example-translation { color: #666; font-size: 1em; }
+        
+        /* Interaction */
+        .interaction-area { background: #fff3e0; padding: 25px; border-radius: 10px; 
+                            margin-top: 25px; }
+        .interaction-title { font-size: 1.3em; font-weight: bold; margin-bottom: 20px; 
+                            color: #e65100; }
+        
+        /* Options */
+        .option-button { display: block; width: 100%; text-align: left; 
+                         background: white; color: #333; border: 2px solid #ddd; 
+                         padding: 15px 20px; border-radius: 10px; cursor: pointer; 
+                         font-size: 1.1em; transition: all 0.3s; margin-bottom: 12px; }
+        .option-button:hover { background: #f5f5f5; border-color: #667eea; 
+                              transform: translateX(5px); }
+        .option-button:disabled { cursor: not-allowed; opacity: 0.6; 
+                                  transform: none; }
+        .option-button.correct { background: #c8e6c9; border-color: #4caf50; }
+        .option-button.incorrect { background: #ffcdd2; border-color: #f44336; }
+        
+        /* Feedback */
+        .feedback { padding: 15px; border-radius: 8px; margin-top: 20px; 
+                    font-weight: bold; display: none; font-size: 1.1em; }
+        .feedback.correct { background: #c8e6c9; color: #2e7d32; }
+        .feedback.incorrect { background: #ffcdd2; color: #c62828; }
+        .feedback.encouragement { background: #fff9c4; color: #f57f17; }
+        
+        /* Buttons */
+        .action-buttons { margin-top: 25px; display: flex; gap: 15px; }
+        .btn { background: #667eea; color: white; border: none; padding: 12px 24px; 
+               border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: all 0.3s; 
+               flex: 1; }
+        .btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .btn-success { background: #4caf50; }
+        .btn-success:hover { background: #388e3c; }
+        
+        /* Completion */
+        .completion-card { background: white; padding: 40px; border-radius: 15px; 
+                           box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; }
+        .completion-title { color: #667eea; font-size: 2.5em; margin-bottom: 20px; }
+        .completion-text { font-size: 1.3em; margin: 20px 0; }
+        
+        /* AI Tutor */
+        .ai-tutor { position: fixed; bottom: 30px; right: 30px; 
+                     background: #667eea; color: white; width: 60px; height: 60px; 
+                     border-radius: 50%; display: flex; align-items: center; 
+                     justify-content: center; cursor: pointer; font-size: 1.5em;
+                     box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; }
+        .ai-tutor:hover { transform: scale(1.1); }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .word-title { font-size: 2em; }
+            .achievement-bar { flex-direction: column; gap: 15px; }
+            .status-indicators { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 中考词汇精讲</h1>
+            <p>智能复习系统 · 错词轮转 · 成就激励</p>
+        </div>
+        
+        <!-- Achievement Bar -->
+        <div class="achievement-bar">
+            <div class="achievement-item">
+                <div class="achievement-number" id="todayMastered">0</div>
+                <div class="achievement-label">今日掌握</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-number" id="totalMastered">0</div>
+                <div class="achievement-label">总掌握词数</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-number" id="streakDays">0</div>
+                <div class="achievement-label">连续学习天数</div>
+            </div>
+        </div>
+        
+        <!-- Status Indicators -->
+        <div class="status-indicators">
+            <div class="status-item">
+                <div class="status-number status-new" id="newCount">0</div>
+                <div class="status-label">待学习新词</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number status-review" id="reviewCount">0</div>
+                <div class="status-label">待复习错词</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number status-mastered" id="masteredCount">0</div>
+                <div class="status-label">已掌握</div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                今日进度：<span id="progressText">0%</span> 
+                | 当前：<span id="currentIndex">0</span> / <span id="totalWords">30</span>
+                | 正确率：<span id="accuracyRate">0%</span>
+            </div>
+        </div>
+        
+        <!-- Word Card -->
+        <div class="word-card" id="wordCard">
+            <div class="word-source" id="wordSource">加载中...</div>
+            <div class="word-title" id="wordText">加载中...</div>
+            <div class="word-phonetic" id="phoneticText"></div>
+            
+            <div class="word-meaning" id="meaningText"></div>
+            <div class="word-collocation" id="collocationText"></div>
+            
+            <div class="word-example">
+                <div class="example-title">📗 中考真题例句</div>
+                <div class="example-sentence" id="exampleSentence"></div>
+                <div class="example-translation" id="exampleTranslation"></div>
+            </div>
+            
+            <div class="interaction-area">
+                <div class="interaction-title">💡 互动练习：选择正确的词义</div>
+                <div id="optionsContainer"></div>
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="nextBtn" style="display:none;">下一个词 →</button>
+                    <button class="btn" onclick="playTTS()" style="flex: 0.5;">🔊 发音</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion -->
+        <div class="completion-card" id="completionCard" style="display:none;">
+            <div class="completion-title">🎉 太棒了！</div>
+            <div class="completion-text" id="completionText"></div>
+            <button class="btn btn-success" style="font-size: 1.3em; padding: 15px 30px;"
+                    onclick="location.reload()">继续学习</button>
+        </div>
+    </div>
+    
+    <!-- AI Tutor Button -->
+    <div class="ai-tutor" title="AI学伴">🤖</div>
+    
+    <script src="assets/vocabulary-data.js"></script>
+    <script>
+        // ========== 智能复习系统 ==========
+        class SmartReviewSystem {
+            constructor() {
+                this.storageKey = 'zhongkao-vocab-system';
+                this.data = this.loadData();
+                this.initSystem();
+            }
+            
+            // 加载数据
+            loadData() {
+                const defaultData = {
+                    currentPool: [],      // 当前学习池
+                    reviewPool: [],       // 复习池
+                    masteredPool: [],     // 已掌握池
+                    wordStatus: {},       // 每个词的状态
+                    achievements: {
+                        todayMastered: 0,
+                        totalMastered: 0,
+                        streakDays: 0,
+                        lastStudyDate: null
+                    },
+                    studyHistory: []      // 学习历史
+                };
+                
+                const saved = localStorage.getItem(this.storageKey);
+                if (saved) {
+                    return { ...defaultData, ...JSON.parse(saved) };
+                }
+                return defaultData;
+            }
+            
+            // 保存数据
+            saveData() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+            }
+            
+            // 初始化系统
+            initSystem() {
+                // 检查是否是新的一天
+                this.checkNewDay();
+                
+                // 如果当前池为空，初始化
+                if (this.data.currentPool.length === 0) {
+                    this.initPools();
+                }
+                
+                this.saveData();
+            }
+            
+            // 检查是否是新的一天
+            checkNewDay() {
+                const today = new Date().toISOString().split('T')[0];
+                
+                if (this.data.achievements.lastStudyDate !== today) {
+                    // 新的一天，重置今日掌握数
+                    this.data.achievements.todayMastered = 0;
+                    
+                    // 更新连续学习天数
+                    if (this.data.achievements.lastStudyDate) {
+                        const lastDate = new Date(this.data.achievements.lastStudyDate);
+                        const todayDate = new Date(today);
+                        const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays === 1) {
+                            // 连续学习
+                            this.data.achievements.streakDays++;
+                        } else if (diffDays > 1) {
+                            // 中断了
+                            this.data.achievements.streakDays = 1;
+                        }
+                    } else {
+                        // 第一次学习
+                        this.data.achievements.streakDays = 1;
+                    }
+                    
+                    this.data.achievements.lastStudyDate = today;
+                }
+            }
+            
+            // 初始化学习池
+            initPools() {
+                // 取前30个词作为第一批新词
+                const firstBatch = vocabularyList.slice(0, 30);
+                this.data.currentPool = firstBatch.map(w => w.word);
+                
+                // 初始化每个词的状态
+                firstBatch.forEach(word => {
+                    if (!this.data.wordStatus[word.word]) {
+                        this.data.wordStatus[word.word] = {
+                            correctStreak: 0,
+                            totalCorrect: 0,
+                            totalWrong: 0,
+                            lastReviewDate: null,
+                            mastered: false
+                        };
+                    }
+                });
+            }
+            
+            // 获取下一个词
+            getNextWord() {
+                // 优先从复习池取词（错词优先）
+                if (this.data.reviewPool.length > 0) {
+                    const reviewWord = this.data.reviewPool.shift();
+                    return { word: reviewWord, source: 'review' };
+                }
+                
+                // 然后从当前池取词
+                if (this.data.currentPool.length > 0) {
+                    const newWord = this.data.currentPool.shift();
+                    return { word: newWord, source: 'new' };
+                }
+                
+                // 如果都空了，说明完成了
+                return null;
+            }
+            
+            // 处理答案
+            processAnswer(word, isCorrect) {
+                const status = this.data.wordStatus[word];
+                
+                if (isCorrect) {
+                    status.totalCorrect++;
+                    status.correctStreak++;
+                    
+                    // 连续答对2次，认为掌握
+                    if (status.correctStreak >= 2 && !status.mastered) {
+                        this.markAsMastered(word);
+                    }
+                } else {
+                    status.totalWrong++;
+                    status.correctStreak = 0;  // 重置连续正确次数
+                    
+                    // 加入复习池
+                    if (!this.data.reviewPool.includes(word)) {
+                        this.data.reviewPool.push(word);
+                    }
+                }
+                
+                status.lastReviewDate = new Date().toISOString().split('T')[0];
+                this.saveData();
+            }
+            
+            // 标记为已掌握
+            markAsMastered(word) {
+                const status = this.data.wordStatus[word];
+                status.mastered = true;
+                
+                // 移入已掌握池
+                if (!this.data.masteredPool.includes(word)) {
+                    this.data.masteredPool.push(word);
+                }
+                
+                // 更新成就
+                this.data.achievements.todayMastered++;
+                this.data.achievements.totalMastered++;
+                
+                this.saveData();
+            }
+            
+            // 获取统计信息
+            getStats() {
+                return {
+                    newCount: this.data.currentPool.length,
+                    reviewCount: this.data.reviewPool.length,
+                    masteredCount: this.data.masteredPool.length,
+                    todayMastered: this.data.achievements.todayMastered,
+                    totalMastered: this.data.achievements.totalMastered,
+                    streakDays: this.data.achievements.streakDays
+                };
+            }
+            
+            // 重置系统（用于测试）
+            reset() {
+                localStorage.removeItem(this.storageKey);
+                location.reload();
+            }
+        }
+        
+        // ========== 主程序 ==========
+        const system = new SmartReviewSystem();
+        
+        // 真实例句（前5个词）
+        const realExamples = {
+            "ability": [
+                { en: "She has the ability to solve complex problems.", cn: "她有解决复杂问题的能力。" }
+            ],
+            "able": [
+                { en: "She is able to speak three languages fluently.", cn: "她能够流利地说三种语言。" }
+            ],
+            "about": [
+                { en: "This book is about Chinese history.", cn: "这本书是关于中国历史的。" }
+            ],
+            "above": [
+                { en: "The plane is flying above the clouds.", cn: "飞机在云层上方飞行。" }
+            ],
+            "abroad": [
+                { en: "He decided to study abroad after graduation.", cn: "他决定毕业后出国留学。" }
+            ]
+        };
+        
+        let currentWord = null;
+        let currentWordData = null;
+        let isAnswered = false;
+        let totalQuestions = 0;
+        let correctCount = 0;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAchievements();
+            updateStatusIndicators();
+            loadNextWord();
+        });
+        
+        // 更新成就显示
+        function updateAchievements() {
+            const stats = system.getStats();
+            document.getElementById('todayMastered').textContent = stats.todayMastered;
+            document.getElementById('totalMastered').textContent = stats.totalMastered;
+            document.getElementById('streakDays').textContent = stats.streakDays;
+        }
+        
+        // 更新状态指示器
+        function updateStatusIndicators() {
+            const stats = system.getStats();
+            document.getElementById('newCount').textContent = stats.newCount;
+            document.getElementById('reviewCount').textContent = stats.reviewCount;
+            document.getElementById('masteredCount').textContent = stats.masteredCount;
+        }
+        
+        // 加载下一个词
+        function loadNextWord() {
+            const next = system.getNextWord();
+            
+            if (!next) {
+                showCompletion();
+                return;
+            }
+            
+            currentWord = next.word;
+            currentWordData = vocabularyList.find(w => w.word === currentWord);
+            
+            // 显示词来源
+            const sourceEl = document.getElementById('wordSource');
+            if (next.source === 'review') {
+                sourceEl.textContent = '🔄 复习词';
+                sourceEl.className = 'word-source review';
+            } else {
+                sourceEl.textContent = '🆕 新词';
+                sourceEl.className = 'word-source new';
+            }
+            
+            // 更新单词信息
+            document.getElementById('wordText').textContent = currentWordData.word;
+            document.getElementById('phoneticText').textContent = currentWordData.phonetic;
+            
+            // 词性彩色标签
+            const posTag = getPosTag(currentWordData.pos);
+            document.getElementById('meaningText').innerHTML = 
+                `<span class="pos-tag ${posTag.class}">${currentWordData.pos}</span>${currentWordData.meaning}`;
+            
+            // 搭配
+            document.getElementById('collocationText').innerHTML = 
+                `<strong>常用搭配：</strong>${currentWordData.collocation}`;
+            
+            // 例句
+            const examples = realExamples[currentWordData.word];
+            if (examples && examples.length > 0) {
+                document.getElementById('exampleSentence').textContent = examples[0].en;
+                document.getElementById('exampleTranslation').textContent = examples[0].cn;
+            } else {
+                document.getElementById('exampleSentence').textContent = '[真实例句加载中...]';
+                document.getElementById('exampleTranslation').textContent = '';
+            }
+            
+            // 生成选项
+            generateOptions(currentWordData);
+            
+            // 更新进度
+            updateProgress();
+            
+            // 重置状态
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        // 获取词性标签
+        function getPosTag(pos) {
+            const posMap = {
+                'n.': 'pos-noun',
+                'v.': 'pos-verb',
+                'adj.': 'pos-adj',
+                'adv.': 'pos-adv',
+                'prep.': 'pos-prep'
+            };
+            return { class: posMap[pos] || 'pos-default' };
+        }
+        
+        // 生成选项
+        function generateOptions(correctWordData) {
+            const container = document.getElementById('optionsContainer');
+            
+            // 随机选3个错误选项
+            const wrongWords = vocabularyList
+                .filter(w => w.word !== correctWordData.word)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            // 合并选项并打乱
+            const allOptions = [correctWordData, ...wrongWords];
+            const shuffled = allOptions.sort(() => Math.random() - 0.5);
+            
+            // 生成按钮
+            container.innerHTML = shuffled.map((word, i) => 
+                `<button class="option-button" onclick="checkAnswer('${word.word}', this)">
+                    <strong>${String.fromCharCode(65+i)}.</strong> ${word.meaning}
+                </button>`
+            ).join('');
+        }
+        
+        // 检查答案
+        function checkAnswer(selectedWord, buttonElement) {
+            if (isAnswered) return;
+            
+            const feedback = document.getElementById('feedback');
+            totalQuestions++;
+            isAnswered = true;
+            
+            // 禁用所有选项
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.includes(currentWordData.meaning)) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            const isCorrect = selectedWord === currentWordData.word;
+            
+            if (isCorrect) {
+                feedback.textContent = getEncouragement();
+                feedback.className = 'feedback encouragement';
+                correctCount++;
+                
+                buttonElement.classList.add('correct');
+            } else {
+                feedback.textContent = `❌ 不对，正确答案是"${currentWordData.meaning}"`;
+                feedback.className = 'feedback incorrect';
+                
+                buttonElement.classList.add('incorrect');
+            }
+            
+            feedback.style.display = 'block';
+            
+            // 处理答案（更新系统）
+            system.processAnswer(currentWordData.word, isCorrect);
+            
+            // 更新显示
+            updateAchievements();
+            updateStatusIndicators();
+            updateProgress();
+            
+            // 显示下一个按钮
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+        
+        // 获取鼓励语
+        function getEncouragement() {
+            const encouragements = [
+                '✅ 正确！太棒了！',
+                '✅ 答对了！你真聪明！',
+                '✅ 完美！继续加油！',
+                '✅ 厉害！你越来越熟练了！'
+            ];
+            return encouragements[Math.floor(Math.random() * encouragements.length)];
+        }
+        
+        // 下一个词
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            loadNextWord();
+        });
+        
+        // 更新进度
+        function updateProgress() {
+            const stats = system.getStats();
+            const totalWords = stats.newCount + stats.reviewCount + stats.masteredCount;
+            const completed = stats.masteredCount;
+            const progress = totalWords > 0 ? (completed / totalWords) * 100 : 0;
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '%';
+            document.getElementById('currentIndex').textContent = completed + 1;
+            document.getElementById('totalWords').textContent = totalWords;
+            
+            const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('accuracyRate').textContent = Math.round(accuracy) + '%';
+        }
+        
+        // 显示完成页面
+        function showCompletion() {
+            document.getElementById('wordCard').style.display = 'none';
+            document.getElementById('completionCard').style.display = 'block';
+            
+            const stats = system.getStats();
+            document.getElementById('completionText').innerHTML = 
+                `你今天掌握了 <strong>${stats.todayMastered}</strong> 个词！<br>` +
+                `总掌握：<strong>${stats.totalMastered}</strong> 个词<br>` +
+                `连续学习：<strong>${stats.streakDays}</strong> 天<br><br>` +
+                `继续加油！💪`;
+        }
+        
+        // TTS发音（演示）
+        function playTTS() {
+            alert(`🔊 TTS发音演示：\n\n单词：${currentWordData.word}\n音标：${currentWordData.phonetic}\n\n（实际运行时会播放真实发音）`);
+        }
+        
+        // AI学伴（演示）
+        document.querySelector('.ai-tutor').addEventListener('click', function() {
+            alert(`🤖 AI学伴演示：\n\n当前单词：${currentWordData.word}\n\n（实际运行时会调用AI接口）`);
+        });
+    </script>
+</body>
+</html>

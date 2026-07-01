@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>诊断：JS 文件加载</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        .log { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🔍 诊断 JS 文件加载问题</h1>
+    
+    <div class="log">
+        <strong>测试 1：检查 vocabulary-data.js 是否可访问</strong><br>
+        <div id="test1">测试中...</div>
+    </div>
+    
+    <div class="log">
+        <strong>测试 2：动态加载 vocabulary-data.js</strong><br>
+        <div id="test2">测试中...</div>
+    </div>
+    
+    <div class="log">
+        <strong>测试 3：检查变量是否定义</strong><br>
+        <div id="test3">测试中...</div>
+    </div>
+    
+    <hr>
+    
+    <button onclick="location.reload()">🔄 重新测试</button>
+    <button onclick="testDirectLoad()">测试：直接加载</button>
+    
+    <script>
+        // 测试 1：使用 fetch 检查文件是否可访问
+        async function testFileAccess() {
+            const test1El = document.getElementById('test1');
+            try {
+                const response = await fetch('assets/vocabulary-data.js');
+                if (response.ok) {
+                    const text = await response.text();
+                    test1El.innerHTML = 
+                        `<span class="success">✅ 文件可访问！</span><br>` +
+                        `  文件大小：${text.length} 字节<br>` +
+                        `  前100字符：${text.substring(0, 100)}...`;
+                    return true;
+                } else {
+                    test1El.innerHTML = 
+                        `<span class="error">❌ 文件访问失败：${response.status}</span>`;
+                    return false;
+                }
+            } catch (e) {
+                test1El.innerHTML = 
+                    `<span class="error">❌ 网络错误：${e.message}</span><br>` +
+                    `  这可能是因为浏览器阻止了 file:// 协议的请求。`;
+                return false;
+            }
+        }
+        
+        // 测试 2：动态加载 JS
+        function testDynamicLoad() {
+            return new Promise((resolve) => {
+                const test2El = document.getElementById('test2');
+                test2El.innerHTML = '⏳ 正在加载...';
+                
+                const script = document.createElement('script');
+                script.src = 'assets/vocabulary-data.js?t=' + new Date().getTime();
+                script.onload = () => {
+                    test2El.innerHTML = 
+                        `<span class="success">✅ JS 文件加载成功！</span>`;
+                    resolve(true);
+                };
+                script.onerror = () => {
+                    test2El.innerHTML = 
+                        `<span class="error">❌ JS 文件加载失败！</span><br>` +
+                        `  可能原因：<br>` +
+                        `  1. 文件路径错误<br>` +
+                        `  2. 浏览器安全策略（file:// 协议）<br>` +
+                        `  3. 文件内容有语法错误`;
+                    resolve(false);
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        // 测试 3：检查变量
+        function testVariable() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    const test3El = document.getElementById('test3');
+                    if (typeof vocabularyList !== 'undefined') {
+                        test3El.innerHTML = 
+                            `<span class="success">✅ vocabularyList 已定义！</span><br>` +
+                            `  类型：${typeof vocabularyList}<br>` +
+                            `  长度：${vocabularyList.length}<br>` +
+                            `  第一个词：${vocabularyList[0].word}`;
+                        resolve(true);
+                    } else {
+                        test3El.innerHTML = 
+                            `<span class="error">❌ vocabularyList 未定义！</span><br>` +
+                            `  可能原因：<br>` +
+                            `  1. JS 文件加载失败<br>` +
+                            `  2. JS 文件有语法错误<br>` +
+                            `  3. 变量在局部作用域中定义`;
+                        resolve(false);
+                    }
+                }, 1000);
+            });
+        }
+        
+        // 主测试流程
+        async function runTests() {
+            const test1Result = await testFileAccess();
+            if (test1Result) {
+                const test2Result = await testDynamicLoad();
+                if (test2Result) {
+                    await testVariable();
+                }
+            }
+        }
+        
+        // 启动测试
+        runTests();
+        
+        // 备用：直接加载
+        function testDirectLoad() {
+            const script = document.createElement('script');
+            script.src = 'assets/vocabulary-data.js';
+            script.onload = () => {
+                alert('✅ 加载成功！\n\nvocabularyList 长度：' + 
+                      (typeof vocabularyList !== 'undefined' ? vocabularyList.length : '未定义'));
+            };
+            script.onerror = () => {
+                alert('❌ 加载失败！\n\n请检查：\n1. 文件路径是否正确\n2. 浏览器是否允许加载本地 JS 文件');
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>

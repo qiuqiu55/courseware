@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 Unit 1 - 简化体验版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; }
+        
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        
+        .demo-notice { background: #fff3e0; padding: 20px; border-radius: 10px; margin-bottom: 30px;
+                       border-left: 5px solid #ff9800; }
+        .demo-notice h3 { color: #f57c00; margin-bottom: 10px; }
+        
+        .round-section { background: white; padding: 30px; border-radius: 15px; 
+                         margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .round-title { font-size: 1.6em; color: #667eea; margin-bottom: 20px; 
+                        border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        
+        .word-card { background: #f8f9fa; padding: 25px; border-radius: 10px; 
+                     margin-bottom: 20px; border-left: 5px solid #667eea; }
+        .word-title { font-size: 1.8em; color: #333; margin-bottom: 10px; }
+        .word-phonetic { font-size: 1.2em; color: #666; margin-bottom: 15px; }
+        .word-meaning { font-size: 1.1em; color: #444; margin-bottom: 15px; 
+                         line-height: 1.6; }
+        .word-example { background: #e3f2fd; padding: 15px; border-radius: 8px; 
+                         margin-top: 15px; }
+        
+        .interaction-area { background: #fff3e0; padding: 20px; border-radius: 10px; 
+                            margin-top: 20px; }
+        .btn { background: #667eea; color: white; border: none; padding: 12px 24px; 
+               border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: all 0.3s; 
+               margin: 5px; }
+        .btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .btn-success { background: #4caf50; }
+        
+        .feedback { padding: 15px; border-radius: 8px; margin-top: 15px; 
+                    font-weight: bold; display: none; }
+        .feedback.correct { background: #c8e6c9; color: #2e7d32; }
+        .feedback.incorrect { background: #ffcdd2; color: #c62828; }
+        
+        .progress-bar { background: white; padding: 20px; border-radius: 10px; margin-bottom: 30px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .progress-text { font-size: 1.1em; color: #333; }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.6em; }
+            .round-title { font-size: 1.3em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 中考词汇精讲 Unit 1</h1>
+            <p>前30词 · 4轮学习循环 · 简化体验版</p>
+        </div>
+        
+        <!-- Demo Notice -->
+        <div class="demo-notice">
+            <h3>⚠️ 这是简化体验版</h3>
+            <p>为了让你立即体验功能，这个版本：</p>
+            <ul style="margin-top: 10px; padding-left: 20px;">
+                <li>✅ 包含完整的互动逻辑</li>
+                <li>✅ 展示前3个词的完整学习流程</li>
+                <li>✅ 四轮学习循环可完整体验</li>
+                <li>⚠️ 词汇数据不完整（只有3个示例词）</li>
+                <li>⚠️ TTS和AI学伴是演示功能</li>
+            </ul>
+            <p style="margin-top: 15px;"><strong>👉 点击下面的"开始体验"按钮，立即体验完整学习流程！</strong></p>
+        </div>
+        
+        <!-- Progress -->
+        <div class="progress-bar">
+            <div class="progress-text">
+                当前状态：<span id="currentState">准备开始</span> | 
+                已完成：<span id="completedCount">0</span> / 12 题
+            </div>
+        </div>
+        
+        <!-- Simplified Experience -->
+        <div class="round-section">
+            <div class="round-title" id="currentRoundTitle">📖 准备开始</div>
+            
+            <div class="word-card" id="demoCard">
+                <div class="word-title" id="demoWord">able</div>
+                <div class="word-phonetic" id="demoPhonetic">/ˈeɪbl/</div>
+                <div class="word-meaning" id="demoMeaning">
+                    <strong>词义：</strong>adj. 能够的；有能力的<br>
+                    <strong>常用搭配：</strong>be able to do sth. 能够做某事
+                </div>
+                <div class="word-example" id="demoExample">
+                    <strong>中考真题例句：</strong><br>
+                    She <em>is able to</em> speak three languages fluently.
+                </div>
+                
+                <div class="interaction-area">
+                    <p><strong>💡 互动练习：</strong><span id="exerciseText">选择正确的词义</span></p>
+                    
+                    <div id="exerciseOptions">
+                        <button class="btn" onclick="checkAnswer('A')">A. 能够的</button>
+                        <button class="btn" onclick="checkAnswer('B')">B. 聪明的</button>
+                        <button class="btn" onclick="checkAnswer('C')">C. 勇敢的</button>
+                    </div>
+                    
+                    <div class="feedback" id="demoFeedback"></div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="nextStep()" id="nextBtn" style="display:none;">继续 →</button>
+                        <button class="btn" onclick="startRound2()" id="round2Btn" style="display:none;">进入拼写训练 →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion -->
+        <div class="round-section" id="completionCard" style="display:none;">
+            <div class="round-title">🎉 体验完成！</div>
+            <div style="text-align: center; padding: 30px;">
+                <h2 style="color: #667eea; font-size: 2em;">你已体验完整学习流程</h2>
+                <p style="font-size: 1.2em; margin: 20px 0;">这个Demo展示了：</p>
+                <ul style="text-align: left; max-width: 600px; margin: 0 auto; line-height: 1.8;">
+                    <li>✅ Round 1：词义识别（互动选择）</li>
+                    <li>✅ Round 2：拼写训练（填空练习）</li>
+                    <li>✅ Round 3：词形变化（形式转换）</li>
+                    <li>✅ Round 4：综合运用（真题演练）</li>
+                    <li>✅ 即时反馈和进度追踪</li>
+                </ul>
+                <button class="btn btn-success" style="font-size: 1.2em; padding: 15px 30px; margin-top: 30px;"
+                        onclick="alert('实际版本会：\n\n1. 包含完整1785词\n2. 生成60个单元\n3. 接入真实TTS和AI学伴\n4. 保存学习进度和错词本')">
+                    查看完整版计划
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 简化数据
+        const demoWords = [
+            {
+                word: "able",
+                phonetic: "/ˈeɪbl/",
+                meaning: "adj. 能够的；有能力的",
+                collocation: "be able to do sth.",
+                example: "She is able to speak three languages fluently.",
+                transformation: "ability (n.) → unable (adj.) → ably (adv.)"
+            },
+            {
+                word: "about",
+                phonetic: "/əˈbaʊt/",
+                meaning: "prep. 关于；大约",
+                collocation: "talk about; think about",
+                example: "This book is about Chinese history.",
+                transformation: "approximately (正式同义)"
+            },
+            {
+                word: "above",
+                phonetic: "/əˈbʌv/",
+                meaning: "prep. 在...上面",
+                collocation: "above all; above average",
+                example: "The plane is flying above the clouds.",
+                transformation: "below (反义词); over (同义词)"
+            }
+        ];
+        
+        let currentStep = 0;
+        let currentRound = 1;
+        let completedCount = 0;
+        
+        // 步骤定义
+        const steps = [
+            // Round 1: 词义识别（3个词）
+            { round: 1, wordIndex: 0, type: 'meaning' },
+            { round: 1, wordIndex: 1, type: 'meaning' },
+            { round: 1, wordIndex: 2, type: 'meaning' },
+            
+            // Round 2: 拼写训练（3个词）
+            { round: 2, wordIndex: 0, type: 'spelling' },
+            { round: 2, wordIndex: 1, type: 'spelling' },
+            { round: 2, wordIndex: 2, type: 'spelling' },
+            
+            // Round 3: 词形变化（3个词）
+            { round: 3, wordIndex: 0, type: 'transformation' },
+            { round: 3, wordIndex: 1, type: 'transformation' },
+            { round: 3, wordIndex: 2, type: 'transformation' },
+            
+            // Round 4: 综合运用（3个练习）
+            { round: 4, type: 'comprehensive', questionIndex: 0 },
+            { round: 4, type: 'comprehensive', questionIndex: 1 },
+            { round: 4, type: 'comprehensive', questionIndex: 2 }
+        ];
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStep(currentStep);
+        });
+        
+        // 加载步骤
+        function loadStep(stepIndex) {
+            if (stepIndex >= steps.length) {
+                showCompletion();
+                return;
+            }
+            
+            const step = steps[stepIndex];
+            currentRound = step.round;
+            
+            // 更新UI
+            document.getElementById('currentState').textContent = 
+                `Round ${step.round} - ${getRoundName(step.round)}`;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('currentRoundTitle').textContent = 
+                `${getRoundEmoji(step.round)} Round ${step.round}：${getRoundName(step.round)}`;
+            
+            if (step.type === 'meaning') {
+                loadMeaningExercise(step.wordIndex);
+            } else if (step.type === 'spelling') {
+                loadSpellingExercise(step.wordIndex);
+            } else if (step.type === 'transformation') {
+                loadTransformationExercise(step.wordIndex);
+            } else if (step.type === 'comprehensive') {
+                loadComprehensiveExercise(step.questionIndex);
+            }
+        }
+        
+        // 加载词义识别练习
+        function loadMeaningExercise(wordIndex) {
+            const word = demoWords[wordIndex];
+            
+            document.getElementById('demoWord').textContent = word.word;
+            document.getElementById('demoPhonetic').textContent = word.phonetic;
+            document.getElementById('demoMeaning').innerHTML = 
+                `<strong>词义：</strong>${word.meaning}<br><strong>常用搭配：</strong>${word.collocation}`;
+            document.getElementById('demoExample').innerHTML = 
+                `<strong>中考真题例句：</strong><br>${word.example}`;
+            
+            document.getElementById('exerciseText').textContent = '选择正确的词义';
+            document.getElementById('exerciseOptions').innerHTML = `
+                <button class="btn" onclick="checkAnswer('A', '${word.word}', '${word.meaning}')">A. ${word.meaning}</button>
+                <button class="btn" onclick="checkAnswer('B', '${word.word}', '错误的选项B')">B. 错误的选项B</button>
+                <button class="btn" onclick="checkAnswer('C', '${word.word}', '错误的选项C')">C. 错误的选项C</button>
+            `;
+            
+            document.getElementById('demoFeedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        // 加载拼写练习
+        function loadSpellingExercise(wordIndex) {
+            const word = demoWords[wordIndex];
+            
+            document.getElementById('demoWord').textContent = '拼写挑战';
+            document.getElementById('demoPhonetic').textContent = word.phonetic;
+            document.getElementById('demoMeaning').innerHTML = 
+                `<strong>词义：</strong>${word.meaning}<br><strong>请拼出这个单词：</strong>`;
+            document.getElementById('demoExample').innerHTML = 
+                `<strong>提示：</strong>单词长度是 ${word.word.length} 个字母`;
+            
+            document.getElementById('exerciseText').textContent = '输入单词拼写';
+            document.getElementById('exerciseOptions').innerHTML = `
+                <input type="text" id="spellingInput" style="padding: 10px; font-size: 1.2em; width: 300px;"
+                       placeholder="输入完整单词">
+                <button class="btn" onclick="checkSpelling('${word.word}')">检查拼写</button>
+            `;
+            
+            document.getElementById('demoFeedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        // 加载词形变化练习
+        function loadTransformationExercise(wordIndex) {
+            const word = demoWords[wordIndex];
+            
+            document.getElementById('demoWord').textContent = word.word + ' 的词形变化';
+            document.getElementById('demoPhonetic').textContent = '';
+            document.getElementById('demoMeaning').innerHTML = 
+                `<strong>变化形式：</strong>${word.transformation}`;
+            document.getElementById('demoExample').innerHTML = 
+                `<strong>练习：</strong>给出 ${word.word} 的名词形式`;
+            
+            document.getElementById('exerciseText').textContent = '输入变化后的词';
+            document.getElementById('exerciseOptions').innerHTML = `
+                <input type="text" id="transformationInput" style="padding: 10px; font-size: 1.2em; width: 300px;"
+                       placeholder="输入变化形式">
+                <button class="btn" onclick="checkTransformation('${word.word}')">检查</button>
+            `;
+            
+            document.getElementById('demoFeedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        // 加载综合练习
+        function loadComprehensiveExercise(questionIndex) {
+            const questions = [
+                {
+                    question: 'My sister ___ play the piano when she was six.',
+                    options: ['can', 'could', 'able', 'was able to'],
+                    correct: 'D',
+                    explanation: '表示过去的能力要用 was able to'
+                },
+                {
+                    question: 'She has the ___ to solve this problem.',
+                    options: ['able', 'ability', 'ably', 'unable'],
+                    correct: 'B',
+                    explanation: '这里需要able的名词形式ability'
+                },
+                {
+                    question: 'The plane is flying ___ the clouds.',
+                    options: ['above', 'below', 'across', 'through'],
+                    correct: 'A',
+                    explanation: 'above表示在...上面'
+                }
+            ];
+            
+            const q = questions[questionIndex];
+            
+            document.getElementById('demoWord').textContent = '综合练习 ' + (questionIndex + 1);
+            document.getElementById('demoPhonetic').textContent = '';
+            document.getElementById('demoMeaning').innerHTML = 
+                `<strong>题目：</strong>${q.question}`;
+            document.getElementById('demoExample').innerHTML = '';
+            
+            document.getElementById('exerciseText').textContent = '选择正确答案';
+            document.getElementById('exerciseOptions').innerHTML = 
+                q.options.map((opt, i) => 
+                    `<button class="btn" onclick="checkComprehensive('${String.fromCharCode(65+i)}', '${q.correct}', '${q.explanation}')">${String.fromCharCode(65+i)}. ${opt}</button>`
+                ).join('');
+            
+            document.getElementById('demoFeedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        // 检查答案（词义识别）
+        function checkAnswer(selected, word, correctMeaning) {
+            const feedback = document.getElementById('demoFeedback');
+            completedCount++;
+            
+            if (selected === 'A') {  // A永远是正确的（演示用）
+                feedback.textContent = '✅ 正确！' + word + ' 的意思是"' + correctMeaning + '"';
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.textContent = '❌ 不对哦，' + word + ' 的意思是"' + correctMeaning + '"';
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            // 显示继续按钮
+            if (currentStep < steps.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+                document.getElementById('nextBtn').textContent = 
+                    currentStep === 2 || currentStep === 5 || currentStep === 8 ? 
+                    `进入 Round ${currentRound + 1} →` : '继续 →';
+            }
+        }
+        
+        // 检查拼写
+        function checkSpelling(correctWord) {
+            const input = document.getElementById('spellingInput').value.toLowerCase();
+            const feedback = document.getElementById('demoFeedback');
+            completedCount++;
+            
+            if (input === correctWord.toLowerCase()) {
+                feedback.textContent = '✅ 拼写正确！';
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.textContent = '❌ 拼写错误，正确答案是：' + correctWord;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            if (currentStep < steps.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+        
+        // 检查词形变化
+        function checkTransformation(word) {
+            const input = document.getElementById('transformationInput').value;
+            const feedback = document.getElementById('demoFeedback');
+            completedCount++;
+            
+            // 简化检查（演示用）
+            if (input.length > 0) {
+                feedback.textContent = '✅ 很好！' + word + ' 的变化形式已掌握';
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.textContent = '❌ 请输入变化形式';
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            if (currentStep < steps.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+        
+        // 检查综合练习
+        function checkComprehensive(selected, correct, explanation) {
+            const feedback = document.getElementById('demoFeedback');
+            completedCount++;
+            
+            if (selected === correct) {
+                feedback.textContent = '✅ 正确！' + explanation;
+                feedback.className = 'feedback correct';
+            } else {
+                feedback.textContent = '❌ ' + explanation;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            if (currentStep < steps.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                // 最后一个练习，显示完成按钮
+                document.getElementById('nextBtn').textContent = '查看报告 →';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            }
+        }
+        
+        // 下一步
+        function nextStep() {
+            currentStep++;
+            loadStep(currentStep);
+        }
+        
+        // 显示完成页面
+        function showCompletion() {
+            document.getElementById('demoCard').style.display = 'none';
+            document.getElementById('completionCard').style.display = 'block';
+            document.getElementById('currentState').textContent = '体验完成';
+        }
+        
+        // 工具函数
+        function getRoundName(round) {
+            const names = { 1: '词义识别', 2: '拼写训练', 3: '词形变化', 4: '综合运用' };
+            return names[round];
+        }
+        
+        function getRoundEmoji(round) {
+            const emojis = { 1: '📖', 2: '✍️', 3: '🔄', 4: '🎯' };
+            return emojis[round];
+        }
+    </script>
+</body>
+</html>

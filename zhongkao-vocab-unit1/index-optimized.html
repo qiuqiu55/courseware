@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 Unit 1 - 界面优化版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .header h1 { font-size: 2.2em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        
+        .progress-bar { background: white; padding: 20px; border-radius: 10px; margin-bottom: 30px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .progress-track { background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #667eea, #764ba2); 
+                         height: 100%; width: 0%; transition: width 0.5s; }
+        .progress-text { margin-top: 10px; font-size: 1.1em; color: #333; }
+        
+        .word-card { background: white; padding: 30px; border-radius: 15px; 
+                     margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .word-title { font-size: 2.5em; color: #333; margin-bottom: 15px; 
+                        border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        .word-phonetic { font-size: 1.4em; color: #666; margin-bottom: 20px; 
+                          font-style: italic; }
+        
+        /* 词性彩色标签 */
+        .pos-tag { display: inline-block; padding: 5px 15px; border-radius: 20px; 
+                    font-size: 0.9em; font-weight: bold; margin-right: 10px; 
+                    color: white; }
+        .pos-noun { background: #2196f3; }      /* 名词 - 蓝色 */
+        .pos-verb { background: #f44336; }      /* 动词 - 红色 */
+        .pos-adj { background: #4caf50; }      /* 形容词 - 绿色 */
+        .pos-adv { background: #ff9800; }      /* 副词 - 橙色 */
+        .pos-prep { background: #9c27b0; }    /* 介词 - 紫色 */
+        .pos-pron { background: #00bcd4; }    /* 代词 - 青色 */
+        .pos-conj { background: #795548; }     /* 连词 - 棕色 */
+        .pos-default { background: #607d8b; }  /* 其他 - 蓝灰色 */
+        
+        .word-meaning { font-size: 1.3em; color: #444; margin-bottom: 20px; 
+                         line-height: 1.8; }
+        .word-collocation { background: #f5f5f5; padding: 15px; border-radius: 8px; 
+                            margin-bottom: 20px; font-size: 1.1em; }
+        
+        .word-example { background: #e3f2fd; padding: 20px; border-radius: 10px; 
+                         margin-top: 20px; border-left: 4px solid #2196f3; }
+        .example-title { font-weight: bold; color: #1976d2; margin-bottom: 10px; 
+                         font-size: 1.1em; }
+        .example-sentence { font-size: 1.2em; line-height: 1.6; margin-bottom: 10px; }
+        .example-translation { color: #666; font-size: 1em; }
+        
+        .interaction-area { background: #fff3e0; padding: 25px; border-radius: 10px; 
+                            margin-top: 25px; }
+        .interaction-title { font-size: 1.3em; font-weight: bold; margin-bottom: 20px; 
+                            color: #e65100; }
+        
+        /* 选项一个一行 */
+        .option-button { display: block; width: 100%; text-align: left; 
+                         background: white; color: #333; border: 2px solid #ddd; 
+                         padding: 15px 20px; border-radius: 10px; cursor: pointer; 
+                         font-size: 1.1em; transition: all 0.3s; margin-bottom: 12px; }
+        .option-button:hover { background: #f5f5f5; border-color: #667eea; 
+                              transform: translateX(5px); }
+        .option-button.selected { background: #e3f2fd; border-color: #2196f3; }
+        .option-button.correct { background: #c8e6c9; border-color: #4caf50; }
+        .option-button.incorrect { background: #ffcdd2; border-color: #f44336; }
+        
+        .feedback { padding: 15px; border-radius: 8px; margin-top: 20px; 
+                    font-weight: bold; display: none; font-size: 1.1em; }
+        .feedback.correct { background: #c8e6c9; color: #2e7d32; }
+        .feedback.incorrect { background: #ffcdd2; color: #c62828; }
+        
+        .action-buttons { margin-top: 25px; display: flex; gap: 15px; 
+                          justify-content: space-between; }
+        .btn { background: #667eea; color: white; border: none; padding: 12px 24px; 
+               border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: all 0.3s; 
+               flex: 1; }
+        .btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .btn-success { background: #4caf50; }
+        .btn-success:hover { background: #388e3c; }
+        
+        .ai-tutor { position: fixed; bottom: 30px; right: 30px; 
+                     background: #667eea; color: white; width: 60px; height: 60px; 
+                     border-radius: 50%; display: flex; align-items: center; 
+                     justify-content: center; cursor: pointer; font-size: 1.5em;
+                     box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; }
+        .ai-tutor:hover { transform: scale(1.1); }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .word-title { font-size: 2em; }
+            .option-button { font-size: 1em; padding: 12px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 中考词汇精讲 Unit 1</h1>
+            <p>前30词 · 界面优化版 · 真实例句</p>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                完成进度：<span id="progressText">0%</span> 
+                | 当前词：<span id="currentWordIndex">0</span> / 30
+                | 正确率：<span id="accuracyRate">0%</span>
+            </div>
+        </div>
+        
+        <!-- Word Card -->
+        <div class="word-card" id="currentWordCard">
+            <div class="word-title" id="wordText">加载中...</div>
+            <div class="word-phonetic" id="phoneticText"></div>
+            
+            <div class="word-meaning" id="meaningText"></div>
+            <div class="word-collocation" id="collocationText"></div>
+            
+            <div class="word-example">
+                <div class="example-title">📗 中考真题例句</div>
+                <div class="example-sentence" id="exampleSentence"></div>
+                <div class="example-translation" id="exampleTranslation"></div>
+            </div>
+            
+            <div class="interaction-area">
+                <div class="interaction-title">💡 互动练习：选择正确的词义</div>
+                <div id="optionsContainer"></div>
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="nextBtn" style="display:none;">下一个词 →</button>
+                    <button class="btn" onclick="playTTS()" style="flex: 0.5;">🔊 发音</button>
+                    <button class="btn" onclick="showTransformation()" style="flex: 0.5;">📚 词形变化</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion -->
+        <div class="word-card" id="completionCard" style="display:none;">
+            <div style="text-align: center; padding: 40px;">
+                <h2 style="color: #667eea; font-size: 2.5em;">🎉 太棒了！</h2>
+                <p style="font-size: 1.3em; margin: 20px 0;" id="resultText"></p>
+                <button class="btn btn-success" style="font-size: 1.3em; padding: 15px 30px;"
+                        onclick="location.reload()">重新学习</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Tutor Button -->
+    <div class="ai-tutor" title="AI学伴 - 随时提问">🤖</div>
+    
+    <script src="assets/vocabulary-data.js"></script>
+    <script>
+        // 使用真实词汇数据（取前30个词）
+        const wordsToLearn = vocabularyList.slice(0, 30);
+        
+        // 补充真实例句（前5个词有完整例句）
+        const realExamples = {
+            "ability": [
+                { en: "She has the ability to solve complex problems.", cn: "她有解决复杂问题的能力。" },
+                { en: "His ability in math is extraordinary.", cn: "他的数学能力非常突出。" }
+            ],
+            "able": [
+                { en: "She is able to speak three languages fluently.", cn: "她能够流利地说三种语言。" },
+                { en: "Will you be able to come tomorrow?", cn: "你明天能来吗？" }
+            ],
+            "about": [
+                { en: "This book is about Chinese history.", cn: "这本书是关于中国历史的。" },
+                { en: "It's about 10 kilometers from here.", cn: "从这里大约10公里。" }
+            ],
+            "above": [
+                { en: "The plane is flying above the clouds.", cn: "飞机在云层上方飞行。" },
+                { en: "The temperature is above 30 degrees.", cn: "温度在30度以上。" }
+            ],
+            "abroad": [
+                { en: "He decided to study abroad after graduation.", cn: "他决定毕业后出国留学。" },
+                { en: "Many students dream of going abroad.", cn: "许多学生梦想出国。" }
+            ]
+        };
+        
+        let currentIndex = 0;
+        let correctCount = 0;
+        let totalQuestions = 0;
+        let isAnswered = false;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWord(currentIndex);
+        });
+        
+        // 加载单词
+        function loadWord(index) {
+            if (index >= wordsToLearn.length) {
+                showCompletion();
+                return;
+            }
+            
+            const word = wordsToLearn[index];
+            
+            // 更新单词信息
+            document.getElementById('wordText').textContent = word.word;
+            document.getElementById('phoneticText').textContent = word.phonetic;
+            
+            // 生成词性彩色标签
+            const posTag = getPosTag(word.pos);
+            document.getElementById('meaningText').innerHTML = 
+                `<span class="pos-tag ${posTag.class}">${word.pos}</span>${word.meaning}`;
+            
+            // 搭配
+            document.getElementById('collocationText').innerHTML = 
+                `<strong>常用搭配：</strong>${word.collocation}`;
+            
+            // 真实例句（如果有）
+            const examples = realExamples[word.word];
+            if (examples && examples.length > 0) {
+                const example = examples[0]; // 显示第一个例句
+                document.getElementById('exampleSentence').textContent = example.en;
+                document.getElementById('exampleTranslation').textContent = example.cn;
+            } else {
+                // 没有真实例句时显示提示
+                document.getElementById('exampleSentence').textContent = `[真实例句加载中...]`;
+                document.getElementById('exampleTranslation').textContent = '';
+            }
+            
+            // 生成选项
+            generateOptions(word);
+            
+            // 更新进度
+            updateProgress();
+            
+            // 重置状态
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('selected', 'correct', 'incorrect');
+            });
+        }
+        
+        // 获取词性标签的CSS类
+        function getPosTag(pos) {
+            const posMap = {
+                'n.': { class: 'pos-noun', text: '名词' },
+                'v.': { class: 'pos-verb', text: '动词' },
+                'adj.': { class: 'pos-adj', text: '形容词' },
+                'adv.': { class: 'pos-adv', text: '副词' },
+                'prep.': { class: 'pos-prep', text: '介词' },
+                'pron.': { class: 'pos-pron', text: '代词' },
+                'conj.': { class: 'pos-conj', text: '连词' }
+            };
+            
+            if (posMap[pos]) {
+                return { ...posMap[pos], display: `${posMap[pos].text} ${pos}` };
+            } else {
+                return { class: 'pos-default', text: pos, display: pos };
+            }
+        }
+        
+        // 生成选项（一个一行）
+        function generateOptions(correctWord) {
+            const container = document.getElementById('optionsContainer');
+            
+            // 随机选3个错误选项
+            const wrongWords = wordsToLearn
+                .filter(w => w.word !== correctWord.word)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            // 合并选项并打乱
+            const allOptions = [correctWord, ...wrongWords];
+            const shuffled = allOptions.sort(() => Math.random() - 0.5);
+            
+            // 生成按钮（一个一行）
+            container.innerHTML = shuffled.map((word, i) => 
+                `<button class="option-button" onclick="checkAnswer('${word.word}', this)">
+                    <strong>${String.fromCharCode(65+i)}.</strong> ${word.meaning}
+                </button>`
+            ).join('');
+        }
+        
+        // 检查答案
+        function checkAnswer(selectedWord, buttonElement) {
+            if (isAnswered) return;
+            
+            const correctWord = wordsToLearn[currentIndex];
+            const feedback = document.getElementById('feedback');
+            
+            totalQuestions++;
+            isAnswered = true;
+            
+            // 禁用所有选项按钮
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent.includes(correctWord.meaning)) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            if (selectedWord === correctWord.word) {
+                feedback.textContent = '✅ 正确！';
+                feedback.className = 'feedback correct';
+                buttonElement.classList.add('selected', 'correct');
+                correctCount++;
+            } else {
+                feedback.textContent = `❌ 不对，正确答案是"${correctWord.meaning}"`;
+                feedback.className = 'feedback incorrect';
+                buttonElement.classList.add('selected', 'incorrect');
+            }
+            
+            feedback.style.display = 'block';
+            
+            // 显示下一个按钮
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            updateProgress();
+        }
+        
+        // 下一个词
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            currentIndex++;
+            loadWord(currentIndex);
+        });
+        
+        // 更新进度
+        function updateProgress() {
+            const progress = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '%';
+            document.getElementById('currentWordIndex').textContent = currentIndex + 1;
+            
+            const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('accuracyRate').textContent = Math.round(accuracy) + '%';
+        }
+        
+        // 显示完成页面
+        function showCompletion() {
+            document.getElementById('currentWordCard').style.display = 'none';
+            document.getElementById('completionCard').style.display = 'block';
+            
+            const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('resultText').textContent = 
+                `你完成了前30词的学习！正确率：${Math.round(accuracy)}%`;
+        }
+        
+        // TTS发音（演示）
+        function playTTS() {
+            const word = wordsToLearn[currentIndex];
+            alert(`🔊 TTS发音演示：\n\n单词：${word.word}\n音标：${word.phonetic}\n\n（实际运行时会播放真实发音）`);
+        }
+        
+        // 显示词形变化
+        function showTransformation() {
+            const word = wordsToLearn[currentIndex];
+            let transformationText = `📚 ${word.word} 的词形变化：\n\n`;
+            
+            if (word.transformation && Object.keys(word.transformation).length > 0) {
+                for (const [key, value] of Object.entries(word.transformation)) {
+                    transformationText += `  ${key}: ${value}\n`;
+                }
+            } else {
+                transformationText += '  （暂无词形变化数据）';
+            }
+            
+            transformationText += '\n（实际运行时会有详细讲解和练习）';
+            alert(transformationText);
+        }
+        
+        // AI学伴（演示）
+        document.querySelector('.ai-tutor').addEventListener('click', function() {
+            const word = wordsToLearn[currentIndex];
+            alert(`🤖 AI学伴演示：\n\n当前单词：${word.word}\n\n（实际运行时会调用AI接口，提供：\n✓ 详细讲解\n✓ 用法示例\n✓ 易混词对比\n✓ 记忆技巧）`);
+        });
+    </script>
+</body>
+</html>

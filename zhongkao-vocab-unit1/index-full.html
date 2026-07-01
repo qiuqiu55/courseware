@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 Unit 1 - 完整功能版（前30词）</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                   color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        
+        .progress-bar { background: white; padding: 20px; border-radius: 10px; margin-bottom: 30px;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .progress-track { background: #e0e0e0; height: 20px; border-radius: 10px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #667eea, #764ba2); 
+                         height: 100%; width: 0%; transition: width 0.5s; }
+        .progress-text { margin-top: 10px; font-size: 1.1em; color: #333; }
+        
+        .round-section { background: white; padding: 30px; border-radius: 15px; 
+                         margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .round-title { font-size: 1.8em; color: #667eea; margin-bottom: 20px; 
+                        border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        
+        .word-card { background: #f8f9fa; padding: 25px; border-radius: 10px; 
+                     margin-bottom: 20px; border-left: 5px solid #667eea; }
+        .word-title { font-size: 2em; color: #333; margin-bottom: 10px; }
+        .word-phonetic { font-size: 1.3em; color: #666; margin-bottom: 15px; }
+        .word-meaning { font-size: 1.2em; color: #444; margin-bottom: 15px; 
+                         line-height: 1.6; }
+        .word-example { background: #e3f2fd; padding: 15px; border-radius: 8px; 
+                         margin-top: 15px; }
+        
+        .interaction-area { background: #fff3e0; padding: 20px; border-radius: 10px; 
+                            margin-top: 20px; }
+        .btn { background: #667eea; color: white; border: none; padding: 12px 24px; 
+               border-radius: 8px; cursor: pointer; font-size: 1.1em; transition: all 0.3s; 
+               margin: 5px; }
+        .btn:hover { background: #764ba2; transform: translateY(-2px); }
+        .btn-success { background: #4caf50; }
+        .btn-success:hover { background: #388e3c; }
+        
+        .feedback { padding: 15px; border-radius: 8px; margin-top: 15px; 
+                    font-weight: bold; display: none; }
+        .feedback.correct { background: #c8e6c9; color: #2e7d32; }
+        .feedback.incorrect { background: #ffcdd2; color: #c62828; }
+        
+        .ai-tutor { position: fixed; bottom: 30px; right: 30px; 
+                     background: #667eea; color: white; width: 60px; height: 60px; 
+                     border-radius: 50%; display: flex; align-items: center; 
+                     justify-content: center; cursor: pointer; font-size: 1.5em;
+                     box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; }
+        .ai-tutor:hover { transform: scale(1.1); }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .round-title { font-size: 1.4em; }
+            .word-title { font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 中考词汇精讲 Unit 1</h1>
+            <p>前30词 · 真实词汇数据 · 完整功能版</p>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text">
+                完成进度：<span id="progressText">0%</span> 
+                | 当前词：<span id="currentWordIndex">0</span> / 30
+                | 正确率：<span id="accuracyRate">0%</span>
+            </div>
+        </div>
+        
+        <!-- Main Learning Area -->
+        <div class="round-section">
+            <div class="round-title" id="roundTitle">📖 词义识别</div>
+            
+            <div class="word-card" id="currentWordCard">
+                <div class="word-title" id="wordText">加载中...</div>
+                <div class="word-phonetic" id="phoneticText"></div>
+                <div class="word-meaning" id="meaningText"></div>
+                <div class="word-example" id="exampleText"></div>
+                
+                <div class="interaction-area">
+                    <p><strong>💡 互动练习：</strong>选择正确的词义</p>
+                    <div id="optionsContainer"></div>
+                    <div class="feedback" id="feedback"></div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn" id="nextBtn" style="display:none;">下一个词 →</button>
+                        <button class="btn" onclick="playTTS()">🔊 发音</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion -->
+        <div class="round-section" id="completionSection" style="display:none;">
+            <div class="round-title">🎉 完成！</div>
+            <div style="text-align: center; padding: 40px;">
+                <h2 style="color: #667eea; font-size: 2.5em;">太棒了！</h2>
+                <p style="font-size: 1.3em; margin: 20px 0;" id="resultText"></p>
+                <button class="btn btn-success" style="font-size: 1.3em; padding: 15px 30px;"
+                        onclick="location.reload()">重新学习</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AI Tutor Button -->
+    <div class="ai-tutor" title="AI学伴">🤖</div>
+    
+    <script src="assets/vocabulary-data.js"></script>
+    <script>
+        // 使用真实词汇数据（取前30个词）
+        const wordsToLearn = vocabularyList.slice(0, 30);
+        
+        let currentIndex = 0;
+        let correctCount = 0;
+        let totalQuestions = 0;
+        let isAnswered = false;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWord(currentIndex);
+        });
+        
+        // 加载单词
+        function loadWord(index) {
+            if (index >= wordsToLearn.length) {
+                showCompletion();
+                return;
+            }
+            
+            const word = wordsToLearn[index];
+            
+            document.getElementById('wordText').textContent = word.word;
+            document.getElementById('phoneticText').textContent = word.phonetic;
+            document.getElementById('meaningText').innerHTML = 
+                `<strong>词性：</strong>${word.pos}<br><strong>词义：</strong>${word.meaning}<br><strong>搭配：</strong>${word.collocation}`;
+            document.getElementById('exampleText').innerHTML = 
+                `<strong>示例：</strong>${word.example}`;
+            
+            // 生成选项
+            generateOptions(word);
+            
+            // 更新进度
+            updateProgress();
+            
+            // 重置状态
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        // 生成选项
+        function generateOptions(correctWord) {
+            const container = document.getElementById('optionsContainer');
+            
+            // 随机选3个错误选项
+            const wrongWords = wordsToLearn
+                .filter(w => w.word !== correctWord.word)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            // 合并选项并打乱
+            const allOptions = [correctWord, ...wrongWords];
+            const shuffled = allOptions.sort(() => Math.random() - 0.5);
+            
+            // 生成按钮
+            container.innerHTML = shuffled.map((word, i) => 
+                `<button class="btn" onclick="checkAnswer('${word.word}')">${String.fromCharCode(65+i)}. ${word.meaning.substring(0, 30)}...</button>`
+            ).join('');
+        }
+        
+        // 检查答案
+        function checkAnswer(selectedWord) {
+            if (isAnswered) return;
+            
+            const correctWord = wordsToLearn[currentIndex];
+            const feedback = document.getElementById('feedback');
+            
+            totalQuestions++;
+            
+            if (selectedWord === correctWord.word) {
+                feedback.textContent = '✅ 正确！';
+                feedback.className = 'feedback correct';
+                correctCount++;
+            } else {
+                feedback.textContent = `❌ 不对，正确答案是"${correctWord.meaning}"`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            isAnswered = true;
+            
+            // 显示下一个按钮
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            updateProgress();
+        }
+        
+        // 下一个词
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            currentIndex++;
+            loadWord(currentIndex);
+        });
+        
+        // 更新进度
+        function updateProgress() {
+            const progress = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '%';
+            document.getElementById('currentWordIndex').textContent = currentIndex + 1;
+            
+            const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('accuracyRate').textContent = Math.round(accuracy) + '%';
+        }
+        
+        // 显示完成页面
+        function showCompletion() {
+            document.querySelector('.round-section').style.display = 'none';
+            document.getElementById('completionSection').style.display = 'block';
+            
+            const accuracy = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            document.getElementById('resultText').textContent = 
+                `你完成了前30词的学习！正确率：${Math.round(accuracy)}%`;
+        }
+        
+        // TTS发音（演示）
+        function playTTS() {
+            const word = wordsToLearn[currentIndex];
+            alert(`🔊 TTS发音演示：\n\n单词：${word.word}\n音标：${word.phonetic}\n\n（实际运行时会播放真实发音）`);
+        }
+        
+        // AI学伴（演示）
+        document.querySelector('.ai-tutor').addEventListener('click', function() {
+            const word = wordsToLearn[currentIndex];
+            alert(`🤖 AI学伴演示：\n\n当前单词：${word.word}\n\n（实际运行时会调用AI接口，提供：\n✓ 详细讲解\n✓ 用法示例\n✓ 易混词对比\n✓ 记忆技巧）`);
+        });
+    </script>
+</body>
+</html>

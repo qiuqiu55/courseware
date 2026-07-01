@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇 Unit 2 - 独立版</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:#f5f7fa; padding:20px; }
+        .container { max-width:800px; margin:0 auto; }
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); color:white; padding:20px; border-radius:15px; margin-bottom:15px; }
+        .header h1 { font-size:1.8em; }
+        .word-card { background:white; padding:30px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+        .word-title { font-size:2.5em; color:#333; margin-bottom:15px; border-bottom:2px solid #667eea; padding-bottom:10px; }
+        .word-meaning { font-size:1.2em; color:#444; margin-bottom:15px; line-height:1.8; }
+        .option-button { display:block; width:100%; text-align:left; background:white; color:#333; border:2px solid #ddd; padding:12px 18px; border-radius:10px; cursor:pointer; font-size:1.05em; margin-bottom:10px; }
+        .option-button:hover { background:#f5f5f5; border-color:#667eea; }
+        .option-button.correct { background:#c8e6c9 !important; border-color:#4caf50 !important; }
+        .option-button.incorrect { background:#ffcdd2 !important; border-color:#f44336 !important; }
+        .feedback { padding:12px; border-radius:8px; margin-top:15px; font-weight:bold; display:none; }
+        .feedback.correct { background:#c8e6c9; color:#2e7d32; }
+        .feedback.incorrect { background:#ffcdd2; color:#c62828; }
+        .btn { background:#667eea; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:1.05em; margin-top:15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 中考词汇精讲 - Unit 2</h1>
+            <p>独立版 · 无外部依赖</p>
+        </div>
+        
+        <div class="word-card">
+            <div id="wordTitle" class="word-title">加载中...</div>
+            <div id="wordMeaning" class="word-meaning">词义加载中...</div>
+            
+            <div id="optionsContainer">
+                <button class="option-button" disabled>选项加载中...</button>
+                <button class="option-button" disabled>选项加载中...</button>
+                <button class="option-button" disabled>选项加载中...</button>
+                <button class="option-button" disabled>选项加载中...</button>
+            </div>
+            
+            <div id="feedback" class="feedback"></div>
+            <button id="nextBtn" class="btn" style="display:none;" onclick="loadNextWord()">下一个词 →</button>
+        </div>
+    </div>
+    
+    <script>
+        // ========== 数据完全内嵌，无外部依赖 ==========
+        var vocabularyList = [
+            {"word": "afternoon", "pos": "n.", "phonetic": "/ˌɑːftəˈnuːn/", "meaning": "午后，下午", "collocation": "in the afternoon 在下午"},
+            {"word": "again", "pos": "adv.", "phonetic": "/əˈɡen/", "meaning": "又，此外；再一次；再说；增加", "collocation": "again and again 反复地"},
+            {"word": "against", "pos": "prep.", "phonetic": "/əˈɡenst/", "meaning": "反对，违反；靠；倚；防备", "collocation": "againsta gainst 反对"},
+            {"word": "age", "pos": "n.", "phonetic": "/eɪdʒ/", "meaning": "年龄；时代；老年；社会阶级", "collocation": "at the age of 在...岁时"},
+            {"word": "ago", "pos": "adv.", "phonetic": "/əˈɡəʊ/", "meaning": "以前，以往", "collocation": "long ago 很久以前"},
+            {"word": "agree", "pos": "v.", "phonetic": "/əˈɡriː/", "meaning": "同意，协议；商定，一致", "collocation": "agree with sb. 同意某人"},
+            {"word": "agreement", "pos": "n.", "phonetic": "/əˈɡriːmənt/", "meaning": "协定，协议；同意", "collocation": "sign an agreement 签署协议"},
+            {"word": "ahead", "pos": "adv.", "phonetic": "/əˈhed/", "meaning": "向前；在前；领先", "collocation": "go ahead 前进；继续"},
+            {"word": "aid", "pos": "n.", "phonetic": "/eɪd/", "meaning": "援助，帮助；助手", "collocation": "first aid 急救"},
+            {"word": "aim", "pos": "n.", "phonetic": "/eɪm/", "meaning": "目标；对准；枪法", "collocation": "aim at 瞄准；旨在"}
+        ];
+        
+        // ========== 主程序 ==========
+        var currentIndex = 0;
+        var currentWordData = null;
+        var isAnswered = false;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ 页面加载完成');
+            console.log('   词汇数量：', vocabularyList.length);
+            loadNextWord();
+        });
+        
+        function loadNextWord() {
+            if (currentIndex >= vocabularyList.length) {
+                alert('🎉 本单元所有词汇已学习完毕！');
+                return;
+            }
+            
+            currentWordData = vocabularyList[currentIndex];
+            console.log('📖 当前词：', currentWordData.word);
+            
+            document.getElementById('wordTitle').textContent = currentWordData.word;
+            document.getElementById('wordMeaning').innerHTML = 
+                `<span style="color:#2196f3; font-weight:bold;">${currentWordData.pos}</span> ${currentWordData.meaning}`;
+            
+            generateOptions(currentWordData);
+            
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+        
+        function generateOptions(correctWordData) {
+            var container = document.getElementById('optionsContainer');
+            
+            var wrongWords = vocabularyList
+                .filter(w => w.word !== correctWordData.word)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+            
+            var allOptions = [correctWordData, ...wrongWords];
+            var shuffled = allOptions.sort(() => Math.random() - 0.5);
+            
+            container.innerHTML = shuffled.map((word, i) => 
+                `<button class="option-button" onclick="checkAnswer('${word.word}', this)">
+                    <strong>${String.fromCharCode(65+i)}.</strong> ${word.meaning}
+                </button>`
+            ).join('');
+        }
+        
+        function checkAnswer(selectedWord, buttonElement) {
+            if (isAnswered) return;
+            
+            var feedback = document.getElementById('feedback');
+            isAnswered = true;
+            
+            document.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
+            
+            var isCorrect = selectedWord === currentWordData.word;
+            
+            if (isCorrect) {
+                feedback.textContent = '✅ 正确！';
+                feedback.className = 'feedback correct';
+                buttonElement.classList.add('correct');
+            } else {
+                feedback.textContent = `❌ 不对，正确答案是"${currentWordData.meaning}"`;
+                feedback.className = 'feedback incorrect';
+                buttonElement.classList.add('incorrect');
+                
+                document.querySelectorAll('.option-button').forEach(btn => {
+                    if (btn.textContent.includes(currentWordData.meaning)) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+            
+            feedback.style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+        
+        function loadNextWord() {
+            currentIndex++;
+            if (currentIndex < vocabularyList.length) {
+                loadNextWord();
+            } else {
+                document.querySelector('.word-card').innerHTML = '<h2>🎉 本单元学习完毕！</h2>';
+            }
+        }
+    </script>
+</body>
+</html>

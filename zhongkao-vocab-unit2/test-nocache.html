@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Unit 2 测试 - 无缓存</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; background: #f5f7fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; }
+        .word { font-size: 3em; color: #667eea; margin: 20px 0; }
+        .status { padding: 15px; background: #e3f2fd; border-radius: 8px; margin: 20px 0; }
+        .correct { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Unit 2 缓存测试</h1>
+        <p>这个页面会强制重新加载数据，不使用缓存</p>
+        
+        <div class="status" id="status">🔍 正在加载数据...</div>
+        
+        <div class="word" id="firstWord">-</div>
+        <div id="allWords"></div>
+        
+        <hr style="margin: 30px 0;">
+        
+        <p><strong>期望结果：</strong></p>
+        <p>第一个词应该是 <span class="correct">"afternoon"</span></p>
+        <p>如果不是，说明浏览器仍然加载了缓存</p>
+        
+        <button onclick="location.reload(true)" style="padding: 10px 20px; font-size: 1.1em; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            🔄 强制刷新（忽略缓存）
+        </button>
+    </div>
+    
+    <script>
+        // 强制不加载缓存
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusEl = document.getElementById('status');
+            const firstWordEl = document.getElementById('firstWord');
+            const allWordsEl = document.getElementById('allWords');
+            
+            statusEl.innerHTML = '🔍 正在加载 vocabulary-data.js...';
+            
+            // 动态加载JS，带时间戳防缓存
+            const script = document.createElement('script');
+            script.src = 'assets/vocabulary-data.js?t=' + new Date().getTime();
+            script.onload = function() {
+                statusEl.innerHTML = '✅ 数据加载成功！';
+                
+                // 显示第一个词
+                if (vocabularyList && vocabularyList.length > 0) {
+                    const firstWord = vocabularyList[0];
+                    firstWordEl.textContent = firstWord.word;
+                    
+                    if (firstWord.word === 'afternoon') {
+                        firstWordEl.style.color = 'green';
+                        statusEl.innerHTML += '<br>✅ 第一个词正确：afternoon';
+                    } else {
+                        firstWordEl.style.color = 'red';
+                        statusEl.innerHTML += '<br>❌ 第一个词错误：' + firstWord.word + '（期望：afternoon）';
+                    }
+                    
+                    // 显示前5个词
+                    let html = '<p><strong>前5个词：</strong></p><ol>';
+                    for (let i = 0; i < Math.min(5, vocabularyList.length); i++) {
+                        html += `<li>${vocabularyList[i].word} (${vocabularyList[i].pos}) - ${vocabularyList[i].meaning}</li>`;
+                    }
+                    html += '</ol>';
+                    allWordsEl.innerHTML = html;
+                }
+            };
+            script.onerror = function() {
+                statusEl.innerHTML = '❌ 数据加载失败！请检查文件路径';
+                statusEl.className = 'error';
+            };
+            
+            document.head.appendChild(script);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考英语1785词自学系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .units-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .unit-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .unit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .unit-card.completed {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+        
+        .unit-card.in-progress {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .unit-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .unit-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        
+        .unit-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            transition: width 0.5s;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+        
+        .reset-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .reset-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .units-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+            .unit-card { padding: 15px; }
+            .unit-number { font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 中考英语自学系统</h1>
+            <p>每天30词，攻克中考词汇！</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="completedUnits">0</span>
+                    <span class="stat-label">已完成单元</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalWords">0</span>
+                    <span class="stat-label">已掌握词汇</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="progressPercent">0%</span>
+                    <span class="stat-label">总进度</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="units-grid" id="unitsGrid">
+            <!-- 单元卡片会在这里动态生成 -->
+        </div>
+        
+        <div class="footer">
+            <p>💡 点击任意单元开始学习 | 完成所有单元即可征服中考词汇！</p>
+        </div>
+    </div>
+    
+    <button class="reset-btn" onclick="resetAllProgress()">🔄 重置进度</button>
+    
+    <script>
+        const TOTAL_UNITS = 72;
+        const WORDS_PER_UNIT = 30;
+        
+        // 初始化
+        function init() {
+            loadProgress();
+            renderUnits();
+            updateStats();
+        }
+        
+        // 从 localStorage 加载进度
+        function loadProgress() {
+            // 进度数据存在 localStorage 里，每个单元独立存储
+            // 这里只是触发一下，真实数据在每个单元的页面里
+        }
+        
+        // 渲染所有单元卡片
+        function renderUnits() {
+            const grid = document.getElementById('unitsGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 1; i <= TOTAL_UNITS; i++) {
+                const card = createUnitCard(i);
+                grid.appendChild(card);
+            }
+        }
+        
+        // 创建单个单元卡片
+        function createUnitCard(unitNum) {
+            const card = document.createElement('div');
+            card.className = 'unit-card';
+            
+            // 检查进度
+            const progress = getUnitProgress(unitNum);
+            const status = progress.mastered >= WORDS_PER_UNIT ? 'completed' : 
+                          progress.mastered > 0 ? 'in-progress' : '';
+            
+            if (status) card.classList.add(status);
+            
+            card.innerHTML = `
+                <div class="unit-status">${status === 'completed' ? '✅' : status === 'in-progress' ? '🔄' : '📖'}</div>
+                <div class="unit-number">${unitNum}</div>
+                <div class="unit-label">Unit ${unitNum}</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${(progress.mastered / WORDS_PER_UNIT * 100).toFixed(0)}%"></div>
+                </div>
+            `;
+            
+            card.onclick = () => openUnit(unitNum);
+            
+            return card;
+        }
+        
+        // 获取单元进度
+        function getUnitProgress(unitNum) {
+            try {
+                const data = localStorage.getItem(`zhongkao-vocab-unit${unitNum}`);
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    return {
+                        mastered: parsed.mastered || 0,
+                        learning: parsed.learning || 0
+                    };
+                }
+            } catch (e) {}
+            
+            return { mastered: 0, learning: 0 };
+        }
+        
+        // 打开单元
+        function openUnit(unitNum) {
+            const url = `zhongkao-vocab-unit${unitNum}/index.html`;
+            window.open(url, '_blank');
+        }
+        
+        // 更新统计
+        function updateStats() {
+            let completedUnits = 0;
+            let totalWords = 0;
+            
+            for (let i = 1; i <= TOTAL_UNITS; i++) {
+                const progress = getUnitProgress(i);
+                if (progress.mastered >= WORDS_PER_UNIT) {
+                    completedUnits++;
+                }
+                totalWords += progress.mastered;
+            }
+            
+            document.getElementById('completedUnits').textContent = completedUnits;
+            document.getElementById('totalWords').textContent = totalWords;
+            document.getElementById('progressPercent').textContent = 
+                ((completedUnits / TOTAL_UNITS * 100).toFixed(0) + '%');
+        }
+        
+        // 重置所有进度
+        function resetAllProgress() {
+            if (confirm('确定要重置所有学习进度吗？此操作不可撤销！')) {
+                for (let i = 1; i <= TOTAL_UNITS; i++) {
+                    localStorage.removeItem(`zhongkao-vocab-unit${i}`);
+                }
+                renderUnits();
+                updateStats();
+                alert('✅ 所有进度已重置！');
+            }
+        }
+        
+        // 页面获得焦点时刷新进度（从单元页面返回时）
+        window.addEventListener('focus', () => {
+            renderUnits();
+            updateStats();
+        });
+        
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

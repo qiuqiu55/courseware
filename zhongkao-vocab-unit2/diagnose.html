@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>诊断页面 - Unit 2</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        .log { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🔍 诊断 Unit 2 数据加载问题</h1>
+    
+    <div class="log">
+        <strong>测试 1：检查文件是否存在（通过网络请求）</strong><br>
+        <div id="test1">测试中...</div>
+    </div>
+    
+    <div class="log">
+        <strong>测试 2：尝试加载 vocabulary-data.js</strong><br>
+        <div id="test2">测试中...</div>
+    </div>
+    
+    <div class="log">
+        <strong>测试 3：检查 vocabularyList 是否定义</strong><br>
+        <div id="test3">测试中...</div>
+    </div>
+    
+    <div class="log">
+        <strong>测试 4：显示 vocabularyList 的前3个词</strong><br>
+        <div id="test4">测试中...</div>
+    </div>
+    
+    <hr>
+    
+    <button onclick="location.reload()">🔄 重新测试</button>
+    <button onclick="window.location.href='index.html'">返回 Unit 2 主页面</button>
+    
+    <script>
+        // 测试 1：检查文件是否存在
+        document.getElementById('test1').innerHTML = '✅ 开始测试...';
+        
+        // 测试 2：加载 JS 文件
+        function testLoadJS() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'assets/vocabulary-data.js?t=' + new Date().getTime(); // 防缓存
+                script.onload = () => {
+                    document.getElementById('test2').innerHTML = 
+                        '<span class="success">✅ vocabulary-data.js 加载成功！</span>';
+                    resolve();
+                };
+                script.onerror = () => {
+                    document.getElementById('test2').innerHTML = 
+                        '<span class="error">❌ vocabulary-data.js 加载失败！</span><br>' +
+                        '可能原因：<br>' +
+                        '1. 文件路径错误<br>' +
+                        '2. 文件内容有语法错误<br>' +
+                        '3. 浏览器安全策略阻止<br>' +
+                        '请打开控制台（Cmd+Option+I）查看详细错误。';
+                    reject(new Error('JS file load failed'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        // 测试 3：检查变量是否定义
+        function testVariableDefined() {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    if (typeof vocabularyList !== 'undefined') {
+                        document.getElementById('test3').innerHTML = 
+                            `<span class="success">✅ vocabularyList 已定义！</span><br>` +
+                            `类型：${typeof vocabularyList}<br>` +
+                            `长度：${vocabularyList.length}`;
+                        resolve();
+                    } else {
+                        document.getElementById('test3').innerHTML = 
+                            '<span class="error">❌ vocabularyList 未定义！</span><br>' +
+                            '可能原因：<br>' +
+                            '1. JS 文件加载失败<br>' +
+                            '2. JS 文件有语法错误，执行中断<br>' +
+                            '3. 变量在局部作用域中定义';
+                        reject(new Error('variable not defined'));
+                    }
+                }, 1000); // 等待1秒让脚本执行
+            });
+        }
+        
+        // 测试 4：显示数据
+        function testShowData() {
+            return new Promise((resolve) => {
+                if (typeof vocabularyList !== 'undefined' && vocabularyList.length > 0) {
+                    let html = '<span class="success">✅ 数据内容：</span><br>';
+                    for (let i = 0; i < Math.min(3, vocabularyList.length); i++) {
+                        const w = vocabularyList[i];
+                        html += `  ${i+1}. ${w.word} (${w.pos}) - ${w.meaning}<br>`;
+                    }
+                    document.getElementById('test4').innerHTML = html;
+                } else {
+                    document.getElementById('test4').innerHTML = 
+                        '<span class="error">❌ 无数据可显示</span>';
+                }
+                resolve();
+            });
+        }
+        
+        // 执行测试
+        async function runTests() {
+            try {
+                await testLoadJS();
+                await testVariableDefined();
+                await testShowData();
+                
+                document.getElementById('test1').innerHTML = 
+                    '<span class="success">✅ 所有测试通过！</span><br>' +
+                    '请返回主页面并硬刷新（Cmd+Shift+R）';
+            } catch (e) {
+                document.getElementById('test1').innerHTML = 
+                    `<span class="error">❌ 测试失败：${e.message}</span>`;
+            }
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>
