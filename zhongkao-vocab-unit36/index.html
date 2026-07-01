@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中考词汇精讲 - Unit 2</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'PingFang SC','Microsoft YaHei',sans-serif; background:#f5f7fa; }
+        .container { max-width:800px; margin:0 auto; padding:20px; }
+        .header { background:linear-gradient(135deg,#667eea,#764ba2); color:white; padding:20px; border-radius:15px; margin-bottom:15px; }
+        .header h1 { font-size:1.8em; margin-bottom:5px; }
+        .header p { font-size:1em; opacity:0.9; }
+        .minimal-progress { background:white; padding:12px 20px; border-radius:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+        .progress-text { font-size:1em; color:#333; }
+        .word-card { background:white; padding:30px; border-radius:15px; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+        .word-source { font-size:0.85em; color:#999; margin-bottom:12px; padding:4px 10px; background:#f5f5f5; border-radius:5px; display:inline-block; }
+        .word-title { font-size:2.5em; color:#333; margin-bottom:12px; border-bottom:2px solid #667eea; padding-bottom:10px; }
+        .word-phonetic { font-size:1.3em; color:#666; margin-bottom:18px; font-style:italic; }
+        .word-phonetic .play-button { cursor:pointer; color:#2196f3; font-size:1.2em; }
+        .pos-tag { display:inline-block; padding:4px 12px; border-radius:20px; font-size:0.85em; font-weight:bold; margin-right:8px; color:white; }
+        .pos-noun { background:#2196f3; }
+        .pos-verb { background:#f44336; }
+        .pos-adj { background:#4caf50; }
+        .pos-adv { background:#ff9800; }
+        .pos-prep { background:#9c27b0; }
+        .pos-default { background:#607d8b; }
+        .word-meaning { font-size:1.2em; color:#444; margin-bottom:15px; line-height:1.8; }
+        .word-collocation { background:#f5f5f5; padding:12px; border-radius:8px; margin-bottom:18px; font-size:1em; }
+        .word-example { background:#e3f2fd; padding:18px; border-radius:10px; margin-top:18px; border-left:4px solid #2196f3; }
+        .example-title { font-weight:bold; color:#1976d2; margin-bottom:8px; font-size:1em; }
+        .example-sentence { font-size:1.15em; line-height:1.6; margin-bottom:8px; }
+        .example-translation { color:#666; font-size:0.95em; }
+        .interaction-area { background:#fff3e0; padding:20px; border-radius:10px; margin-top:20px; }
+        .interaction-title { font-size:1.2em; font-weight:bold; margin-bottom:15px; color:#e65100; }
+        .option-button { display:block; width:100%; text-align:left; background:white; color:#333; border:2px solid #ddd; padding:12px 18px; border-radius:10px; cursor:pointer; font-size:1.05em; transition:all 0.3s; margin-bottom:10px; }
+        .option-button:hover { background:#f5f5f5; border-color:#667eea; transform:translateX(5px); }
+        .option-button:disabled { cursor:not-allowed; opacity:0.6; transform:none; }
+        .option-button.correct { background:#c8e6c9 !important; border-color:#4caf50 !important; color:#2e7d32 !important; font-weight:bold; }
+        .option-button.incorrect { background:#ffcdd2 !important; border-color:#f44336 !important; color:#c62828 !important; }
+        .feedback { padding:12px; border-radius:8px; margin-top:15px; font-weight:bold; display:none; font-size:1em; }
+        .feedback.correct { background:#c8e6c9; color:#2e7d32; border:2px solid #4caf50; }
+        .feedback.incorrect { background:#ffcdd2; color:#c62828; border:2px solid #f44336; }
+        .action-buttons { margin-top:20px; display:flex; gap:12px; }
+        .btn { background:#667eea; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:1.05em; transition:all 0.3s; flex:1; }
+        .btn:hover { background:#764ba2; transform:translateY(-2px); }
+        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; }
+    </style>
+</head>
+<body>
+    <!-- 返回主页按钮 -->
+    <a href="../zhongkao-vocab-index.html" style="
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: rgba(255,255,255,0.9);
+        color: #667eea;
+        padding: 10px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        transition: all 0.3s;
+    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        🏠 返回主页
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎯 中考词汇精讲</h1>
+            <p>Unit 36 · 智能复习系统</p>
+        </div>
+        
+        <div class="minimal-progress">
+            <div class="progress-text" id="progressText">已掌握：0 | 待学：30</div>
+        </div>
+        
+        <div class="word-card" id="wordCard">
+            <div class="word-source" id="wordSource">🆕 新词</div>
+            <div class="word-title" id="wordText">加载中...</div>
+            <div class="word-phonetic" id="phoneticText">
+                <span class="phonetic-text">[音标加载中...]</span>
+                <span class="play-button" onclick="playTTS()">🔊</span>
+            </div>
+            
+            <div class="word-meaning" id="meaningText">
+                <span class="pos-tag pos-default">词性</span>词义加载中...
+            </div>
+            <div class="word-collocation" id="collocationText">
+                <strong>常用搭配：</strong>加载中...
+            </div>
+            
+            <div class="word-example">
+                <div class="example-title">📗 中考真题例句</div>
+                <div class="example-sentence" id="exampleSentence">[真实例句加载中...]</div>
+                <div class="example-translation" id="exampleTranslation"></div>
+            </div>
+            
+            <div class="interaction-area">
+                <div class="interaction-title">💡 互动练习：选择正确的词义</div>
+                <div id="optionsContainer">
+                    <button class="option-button" disabled>A. 加载中...</button>
+                    <button class="option-button" disabled>B. 加载中...</button>
+                    <button class="option-button" disabled>C. 加载中...</button>
+                    <button class="option-button" disabled>D. 加载中...</button>
+                </div>
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn" id="nextBtn" style="display:none;" onclick="nextWord()">下一个词 →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ========== 词汇数据（完全内嵌，无外部依赖） ==========
+        var vocabularyList = [
+    {
+        "word": "neighbor",
+        "pos": "n.",
+        "phonetic": "",
+        "meaning": "邻居",
+        "collocation": "neighbor of",
+        "example": "My neighbour has two noisy cats.",
+        "example_cn": "【neighbor的例句】"
+    },
+    {
+        "word": "neighbourhood",
+        "pos": "n.",
+        "phonetic": "",
+        "meaning": "邻近；周围；邻居关系；附近一带",
+        "collocation": "neighbourhood of",
+        "example": "Our neighborhood was our only reason to exchange hollow greetings.",
+        "example_cn": "【neighbourhood的例句】"
+    },
+    {
+        "word": "neighborhood",
+        "pos": "n.",
+        "phonetic": "/ˈneɪbə.hʊd/",
+        "meaning": "附近；街坊；接近；街区",
+        "collocation": "neighborhood of",
+        "example": "Our neighborhood was our only reason to exchange hollow greetings.",
+        "example_cn": "【neighborhood的例句】"
+    },
+    {
+        "word": "neither",
+        "pos": "conj.",
+        "phonetic": "/ˈnaɪð.ə(ɹ)/",
+        "meaning": "也不；既不",
+        "collocation": "",
+        "example": "Just as you would not correct it, neither would I.",
+        "example_cn": "【neither的例句】"
+    },
+    {
+        "word": "nervous",
+        "pos": "adj.",
+        "phonetic": "/ˈnɜːvəs/",
+        "meaning": "神经的；紧张不安的；强健有力的",
+        "collocation": "very nervous",
+        "example": "This is about nervous.",
+        "example_cn": "这是关于神经的；紧张不安的；强健有力的的。"
+    },
+    {
+        "word": "net",
+        "pos": "n.",
+        "phonetic": "/net/",
+        "meaning": "网；网络；净利；实价",
+        "collocation": "net of",
+        "example": "This is a net.",
+        "example_cn": "这是一个网；网络；净利；实价。"
+    },
+    {
+        "word": "network",
+        "pos": "n.",
+        "phonetic": "/nɛtwɜːk/",
+        "meaning": "网络；广播网；网状物",
+        "collocation": "network of",
+        "example": "A network of roads crisscrossed the country.",
+        "example_cn": "【network的例句】"
+    },
+    {
+        "word": "never",
+        "pos": "adv.",
+        "phonetic": "/ˈnɛv.ə(ɹ)/",
+        "meaning": "从未；决不",
+        "collocation": "never enough",
+        "example": "I finally finished, and I never want to do that again.",
+        "example_cn": "【never的例句】"
+    },
+    {
+        "word": "new",
+        "pos": "adj.",
+        "phonetic": "/njʉː/",
+        "meaning": "新的，新鲜的；更新的；初见的",
+        "collocation": "very new",
+        "example": "Out with the old, in with the new.",
+        "example_cn": "【new的例句】"
+    },
+    {
+        "word": "news",
+        "pos": "n.",
+        "phonetic": "/njuːz/",
+        "meaning": "新闻，消息；新闻报导",
+        "collocation": "news of",
+        "example": "Is there any news about the storm?",
+        "example_cn": "【news的例句】"
+    },
+    {
+        "word": "newspaper",
+        "pos": "n.",
+        "phonetic": "/ˈnjuːsˌpeɪpə/",
+        "meaning": "报纸",
+        "collocation": "newspaper of",
+        "example": "She newspapered one end of the room before painting the bookcase.",
+        "example_cn": "【newspaper的例句】"
+    },
+    {
+        "word": "next",
+        "pos": "adv.",
+        "phonetic": "/nɛkst/",
+        "meaning": "然后；下次；其次",
+        "collocation": "next enough",
+        "example": "Next, please, don't hold up the queue!",
+        "example_cn": "【next的例句】"
+    },
+    {
+        "word": "nice",
+        "pos": "adj.",
+        "phonetic": "/naɪs/",
+        "meaning": "精密的；美好的；细微的；和蔼的",
+        "collocation": "very nice",
+        "example": "What is a nice person like you doing in a place like this?",
+        "example_cn": "【nice的例句】"
+    },
+    {
+        "word": "night",
+        "pos": "n.",
+        "phonetic": "/naɪt/",
+        "meaning": "夜晚，晚上；黑暗，黑夜",
+        "collocation": "night of",
+        "example": "How do you sleep at night when you attack your kids like that!?",
+        "example_cn": "【night的例句】"
+    },
+    {
+        "word": "nobody",
+        "pos": "pron.",
+        "phonetic": "/ˈnəʊ.bɒ.di/",
+        "meaning": "无人，没有人；没有任何人",
+        "collocation": "",
+        "example": "Whether you're a nobody or a player, everyone in Tinseltown wants to be King of Hollywood! - Conquering Hollywood",
+        "example_cn": "【nobody的例句】"
+    },
+    {
+        "word": "noise",
+        "pos": "n.",
+        "phonetic": "/nɔɪz/",
+        "meaning": "噪音；响声；杂音",
+        "collocation": "noise of",
+        "example": "He knew that it was trash day, when the garbage collectors made all the noise.",
+        "example_cn": "【noise的例句】"
+    },
+    {
+        "word": "noisy",
+        "pos": "adj.",
+        "phonetic": "/ˈnɔːɪzɪ/",
+        "meaning": ".嘈杂的；喧闹的；聒噪的",
+        "collocation": "very noisy",
+        "example": "the noisy crowd.",
+        "example_cn": "【noisy的例句】"
+    },
+    {
+        "word": "none",
+        "pos": "pron.",
+        "phonetic": "/nɒn/",
+        "meaning": "没有人；一个也没有；没有任何东西",
+        "collocation": "",
+        "example": "I felt none the worse for my recent illness.",
+        "example_cn": "【none的例句】"
+    },
+    {
+        "word": "noodle",
+        "pos": "n.",
+        "phonetic": "/nuːdl̩/",
+        "meaning": "面条；笨蛋",
+        "collocation": "noodle of",
+        "example": "She slurped a long noodle up out of her soup.",
+        "example_cn": "【noodle的例句】"
+    },
+    {
+        "word": "nor",
+        "pos": "conj.",
+        "phonetic": "/nɔː/",
+        "meaning": "也不；也不是",
+        "collocation": "",
+        "example": "Nor did I stop to think, but ran.",
+        "example_cn": "【nor的例句】"
+    },
+    {
+        "word": "nose",
+        "pos": "n.",
+        "phonetic": "/nəʊz/",
+        "meaning": "鼻子；嗅觉；突出的部分；探问",
+        "collocation": "nose of",
+        "example": "She has a cold in the nose.",
+        "example_cn": "【nose的例句】"
+    },
+    {
+        "word": "note",
+        "pos": "n.",
+        "phonetic": "/nəʊt/",
+        "meaning": "笔记；音符；票据；注解；纸币；便笺；照会；调子",
+        "collocation": "note of",
+        "example": "a poet of note",
+        "example_cn": "【note的例句】"
+    },
+    {
+        "word": "nothing",
+        "pos": "",
+        "phonetic": "/ˈnʌθɪŋ/",
+        "meaning": "neg. 没什么；毫不 n. 无；零；不关紧要之事 adv. 毫不；决不 pron. 无事；无物 int. 什么也没有",
+        "collocation": "",
+        "example": "You're nothing to me now!",
+        "example_cn": "【nothing的例句】"
+    },
+    {
+        "word": "notice",
+        "pos": "n.",
+        "phonetic": "/ˈnəʊtɪs/",
+        "meaning": "通知，布告；注意；公告",
+        "collocation": "notice of",
+        "example": "He took no notice of the changes, and went on as though nothing had happened.",
+        "example_cn": "【notice的例句】"
+    },
+    {
+        "word": "novel",
+        "pos": "adj.",
+        "phonetic": "/ˈnɒvl̩/",
+        "meaning": "新奇的；异常的",
+        "collocation": "very novel",
+        "example": "This is about novel.",
+        "example_cn": "这是关于新奇的；异常的的。"
+    },
+    {
+        "word": "November",
+        "pos": "n.",
+        "phonetic": "/November/",
+        "meaning": "十一月",
+        "collocation": "November of",
+        "example": "This is a November.",
+        "example_cn": "这是一个十一月。"
+    },
+    {
+        "word": "now",
+        "pos": "adv.",
+        "phonetic": "/naʊ/",
+        "meaning": "现在；如今；立刻",
+        "collocation": "now enough",
+        "example": "Now is the right time.",
+        "example_cn": "【now的例句】"
+    },
+    {
+        "word": "nowadays",
+        "pos": "adv.",
+        "phonetic": "/ˈnaʊ.ə.deɪz/",
+        "meaning": "现今；时下",
+        "collocation": "nowadays enough",
+        "example": "This is about nowadays.",
+        "example_cn": "这是关于现今；时下的。"
+    },
+    {
+        "word": "nowhere",
+        "pos": "adv.",
+        "phonetic": "/ˈnəʊ.wɛə/",
+        "meaning": "无处；任何地方都不；毫无结果",
+        "collocation": "nowhere enough",
+        "example": "They went on a cruise to nowhere.",
+        "example_cn": "【nowhere的例句】"
+    },
+    {
+        "word": "number",
+        "pos": "n.",
+        "phonetic": "/ˈnʌmbə/",
+        "meaning": "数；（杂志等的）期；号码；数字；算术",
+        "collocation": "number of",
+        "example": "Zero, one, −1, 2.5, and pi are all numbers.",
+        "example_cn": "【number的例句】"
+    }
+];;;
+        
+        // ========== 主程序 ==========
+        var currentIndex = 0;
+        var currentWord = null;
+        var isAnswered = false;
+        var stats = { mastered: 0, learning: vocabularyList.length };
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ 页面加载完成');
+            console.log('   词汇数量：', vocabularyList.length);
+            loadWord();
+        });
+        
+        // 加载单词
+        function loadWord() {
+            if (currentIndex >= vocabularyList.length) {
+                document.getElementById('wordCard').innerHTML = '<h2 style="text-align:center; color:#667eea;">🎉 本单元学习完毕！</h2>';
+                return;
+            }
+            
+            currentWord = vocabularyList[currentIndex];
+            console.log('📖 当前词：', currentWord.word);
+            
+            // 更新界面
+            document.getElementById('wordText').textContent = currentWord.word;
+            document.querySelector('.phonetic-text').textContent = currentWord.phonetic || '[音标待补充]';
+            
+            // 词性标签
+            var posClass = 'pos-default';
+            if (currentWord.pos === 'n.') posClass = 'pos-noun';
+            else if (currentWord.pos === 'v.') posClass = 'pos-verb';
+            else if (currentWord.pos === 'adj.') posClass = 'pos-adj';
+            else if (currentWord.pos === 'adv.') posClass = 'pos-adv';
+            else if (currentWord.pos === 'prep.') posClass = 'pos-prep';
+            
+            document.getElementById('meaningText').innerHTML = 
+                '<span class="pos-tag ' + posClass + '">' + currentWord.pos + '</span>' + currentWord.meaning;
+            
+            document.getElementById('collocationText').innerHTML = 
+                '<strong>常用搭配：</strong>' + (currentWord.collocation || '待补充');
+            
+            // 例句
+            if (currentWord.example && currentWord.example !== '') {
+                document.getElementById('exampleSentence').textContent = currentWord.example;
+                document.getElementById('exampleTranslation').textContent = currentWord.example_cn || '';
+            } else {
+                document.getElementById('exampleSentence').textContent = '[暂无例句]';
+                document.getElementById('exampleTranslation').textContent = '';
+            }
+            
+            // 生成选项
+            generateOptions();
+            
+            // 重置状态
+            isAnswered = false;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // 更新进度
+            updateProgress();
+        }
+        
+        // 生成选项
+        function generateOptions() {
+            var container = document.getElementById('optionsContainer');
+            
+            // 随机选3个错误答案
+            var wrongWords = vocabularyList
+                .filter(function(w) { return w.word !== currentWord.word; })
+                .sort(function() { return Math.random() - 0.5; })
+                .slice(0, 3);
+            
+            var allOptions = [currentWord].concat(wrongWords);
+            var shuffled = allOptions.sort(function() { return Math.random() - 0.5; });
+            
+            container.innerHTML = '';
+            for (var i = 0; i < shuffled.length; i++) {
+                var btn = document.createElement('button');
+                btn.className = 'option-button';
+                btn.innerHTML = '<strong>' + String.fromCharCode(65+i) + '.</strong> ' + shuffled[i].meaning;
+                btn.onclick = (function(correct, btnEl) {
+                    return function() {
+                        checkAnswer(correct, btnEl);
+                    };
+                })(shuffled[i].word === currentWord.word, btn);
+                container.appendChild(btn);
+            }
+        }
+        
+        // 检查答案
+        function checkAnswer(isCorrect, buttonElement) {
+            if (isAnswered) return;
+            
+            var feedback = document.getElementById('feedback');
+            isAnswered = true;
+            
+            // 禁用所有选项
+            var buttons = document.querySelectorAll('.option-button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+            }
+            
+            if (isCorrect) {
+                feedback.textContent = '✅ 正确！太棒了！';
+                feedback.className = 'feedback correct';
+                buttonElement.classList.add('correct');
+                stats.mastered++;
+                stats.learning--;
+            } else {
+                feedback.textContent = '❌ 不对，正确答案是"' + currentWord.meaning + '"';
+                feedback.className = 'feedback incorrect';
+                buttonElement.classList.add('incorrect');
+                
+                // 高亮正确答案
+                for (var i = 0; i < buttons.length; i++) {
+                    if (buttons[i].textContent.indexOf(currentWord.meaning) !== -1) {
+                        buttons[i].classList.add('correct');
+                    }
+                }
+            }
+            
+            feedback.style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            updateProgress();
+        }
+        
+        // 下一个词
+        function nextWord() {
+            currentIndex++;
+            loadWord();
+        }
+        
+        // 更新进度
+        function updateProgress() {
+            document.getElementById('progressText').textContent = 
+                '已掌握：' + stats.mastered + ' | 待学：' + stats.learning;
+        }
+        
+        // TTS发音
+        function playTTS() {
+            if ('speechSynthesis' in window) {
+                var utterance = new SpeechSynthesisUtterance(currentWord.word);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+</body>
+</html>
